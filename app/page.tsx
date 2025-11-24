@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import * as Button from '@/components/ui/button';
-import { RiGithubFill } from '@remixicon/react';
+import { RiGithubFill, RiQuestionAnswerLine } from '@remixicon/react';
 
 export default function Home() {
   return (
@@ -11,6 +11,13 @@ export default function Home() {
         </h1>
 
         <div className='mt-6 flex gap-4'>
+          <Button.Root variant='primary' asChild>
+            <Link href='/faq'>
+              <Button.Icon as={RiQuestionAnswerLine} />
+              View FAQ
+            </Link>
+          </Button.Root>
+
           <Button.Root variant='neutral' asChild>
             <a
               href='https://github.com/alignui/alignui-nextjs-typescript-starter'

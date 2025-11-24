@@ -390,3 +390,16 @@
   transform: scale(0.8996);
   transform-origin: center;
 }
+
+/* FAQ content styles */
+.ps-4 {
+  padding-left: 1rem;
+}
+
+.font-arial-mt-bold {
+  font-weight: 700;
+}
+
+.font-sar-symbol {
+  font-family: inherit;
+}
