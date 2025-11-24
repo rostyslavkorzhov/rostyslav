@@ -108,8 +108,8 @@ export default function FAQPage() {
         {/* Header */}
         <div className='mb-8'>
           <h1 className='text-title-h1 text-text-strong-950 mb-4'>
-            {data.TITLE}
-          </h1>
+              {data.TITLE}
+            </h1>
           
           {/* Search Input */}
           <Input.Root size='medium'>
@@ -153,8 +153,8 @@ export default function FAQPage() {
                   
                   return (
                     <div key={categoryName}>
-                      <h2 className='text-title-h4 text-text-strong-950 mb-4 capitalize'>
-                        {categoryName.replace(/_/g, ' ')}
+                      <h2 className='text-title-h2 text-text-strong-950 mb-4'>
+                        {categoryName.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())}
                       </h2>
                       <Accordion.Root type='single' collapsible className='space-y-3'>
                         {filtered.map((faq, index) => (

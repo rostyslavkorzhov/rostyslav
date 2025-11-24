@@ -1,4 +1,4 @@
-export default {
+const faqData = {
   "TITLE": "Frequently Asked Questions",
   "SEARCH_PLACEHOLDER": "Search",
   "NO_RESULTS": "No results found",
@@ -522,3 +522,5 @@ export default {
     "9": []
   }
 };
+
+export default faqData;

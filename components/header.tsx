@@ -14,18 +14,6 @@ export default function Header() {
             href='/'
             className='flex items-center gap-2 text-label-md text-text-strong-950'
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src='/images/logo.svg'
-              alt=''
-              className='size-9 object-contain'
-            />
-            AlignUI
-          </Link>
-          <Link
-            href='/faq'
-            className='text-label-sm text-text-sub-600 hover:text-text-strong-950 transition-colors'
-          >
             FAQ
           </Link>
         </div>
