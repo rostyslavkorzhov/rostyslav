@@ -27,7 +27,6 @@ export const socialButtonVariants = tv({
       google: {},
       facebook: {},
       linkedin: {},
-      github: {},
       dropbox: {},
     },
     mode: {
@@ -118,18 +117,6 @@ export const socialButtonVariants = tv({
       },
     },
     {
-      brand: 'github',
-      mode: 'filled',
-      class: {
-        root: [
-          // base
-          'bg-[#24292f]',
-          // before
-          'before:bg-white-alpha-16',
-        ],
-      },
-    },
-    {
       brand: 'dropbox',
       mode: 'filled',
       class: {
@@ -161,16 +148,6 @@ export const socialButtonVariants = tv({
         root: [
           // base
           'text-social-twitter',
-        ],
-      },
-    },
-    {
-      brand: 'github',
-      mode: 'stroke',
-      class: {
-        root: [
-          // base
-          'text-social-github',
         ],
       },
     },

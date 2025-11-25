@@ -1,5 +1,6 @@
 // AlignUI Divider v0.0.0
 
+import * as React from 'react';
 import { tv, type VariantProps } from '@/utils/tv';
 
 const DIVIDER_ROOT_NAME = 'DividerRoot';

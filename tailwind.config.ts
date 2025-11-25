@@ -569,7 +569,6 @@ const config = {
       social: {
         apple: 'var(--social-apple)',
         twitter: 'var(--social-twitter)',
-        github: 'var(--social-github)',
         notion: 'var(--social-notion)',
         tidal: 'var(--social-tidal)',
         amazon: 'var(--social-amazon)',

@@ -1,238 +1,97 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import * as Accordion from '@/components/ui/accordion';
-import * as Input from '@/components/ui/input';
-import * as TabMenu from '@/components/ui/tab-menu-horizontal';
-import { RiSearchLine } from '@remixicon/react';
-import faqData from './faq-data';
-
-type FAQItem = {
-  TITLE: string;
-  HEADER?: string;
-  CONTENT?: string[];
-  FOOTER?: string;
-};
-
-type FAQCategory = {
-  [key: string]: FAQItem[];
-};
-
-type FAQData = {
-  TITLE: string;
-  SEARCH_PLACEHOLDER: string;
-  NO_RESULTS: string;
-  TABS: {
-    ABOUT_HALA: string;
-    IBAN_ACCOUNT: string;
-    USER_ACCOUNT: string;
-    HALA_PAYMENTS: string;
-  };
-  FAQS: {
-    [key: string]: FAQItem[] | FAQCategory;
-  };
-};
-
-// Flatten nested FAQ structure (for FAQ "4" which has categories)
-function flattenFAQs(faqs: FAQItem[] | FAQCategory): FAQItem[] {
-  if (Array.isArray(faqs)) {
-    return faqs;
-  }
-  // If it's an object with categories, flatten all categories
-  return Object.values(faqs).flat();
-}
-
-// Check if FAQs have nested categories
-function hasNestedCategories(faqs: FAQItem[] | FAQCategory): faqs is FAQCategory {
-  return !Array.isArray(faqs);
-}
-
-// Get category names for nested structure
-function getCategoryNames(faqs: FAQItem[] | FAQCategory): string[] {
-  if (Array.isArray(faqs)) {
-    return [];
-  }
-  return Object.keys(faqs);
-}
-
-// Search function
-function searchFAQs(faqs: FAQItem[], query: string): FAQItem[] {
-  if (!query.trim()) {
-    return faqs;
-  }
-  const lowerQuery = query.toLowerCase();
-  return faqs.filter(
-    (faq) =>
-      faq.TITLE.toLowerCase().includes(lowerQuery) ||
-      faq.HEADER?.toLowerCase().includes(lowerQuery) ||
-      faq.FOOTER?.toLowerCase().includes(lowerQuery) ||
-      faq.CONTENT?.some((item) => item.toLowerCase().includes(lowerQuery))
-  );
-}
+import Link from 'next/link';
+import * as Button from '@/components/ui/button';
+import * as Badge from '@/components/ui/badge';
+import { RiArrowRightSLine, RiSparklingFill } from '@remixicon/react';
 
 export default function Home() {
-  const data = faqData as FAQData;
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('1');
-
-  // Get FAQs for current tab
-  const currentFAQsData = useMemo(() => {
-    return data.FAQS[activeTab];
-  }, [activeTab, data.FAQS]);
-
-  const hasCategories = useMemo(() => {
-    return currentFAQsData ? hasNestedCategories(currentFAQsData) : false;
-  }, [currentFAQsData]);
-
-  const categoryNames = useMemo(() => {
-    return currentFAQsData ? getCategoryNames(currentFAQsData) : [];
-  }, [currentFAQsData]);
-
-  const currentFAQs = useMemo(() => {
-    if (!currentFAQsData) return [];
-    const flattened = flattenFAQs(currentFAQsData);
-    return searchFAQs(flattened, searchQuery);
-  }, [currentFAQsData, searchQuery]);
-
-  // Tab configuration
-  const tabs = [
-    { value: '1', label: data.TABS.ABOUT_HALA },
-    { value: '2', label: data.TABS.IBAN_ACCOUNT },
-    { value: '3', label: data.TABS.USER_ACCOUNT },
-    { value: '4', label: data.TABS.HALA_PAYMENTS },
-  ];
-
   return (
-    <div className='container mx-auto flex-1 px-5 py-8'>
+    <div className='container mx-auto flex-1 px-5 py-16'>
       <div className='mx-auto max-w-4xl'>
-        {/* Header */}
-        <div className='mb-8'>
-          <h1 className='text-title-h1 text-text-strong-950 mb-4'>
-            {data.TITLE}
-        </h1>
+        {/* Hero Section */}
+        <div className='mb-16 text-center'>
+          <Badge.Root variant='primary' className='mb-6'>
+            <Badge.Icon as={RiSparklingFill} />
+            AlignUI Design System
+          </Badge.Root>
+          
+          <h1 className='text-title-h1 text-text-strong-950 mb-6'>
+            Build Beautiful UIs with AlignUI
+          </h1>
+          
+          <p className='text-paragraph-lg text-text-sub-600 mb-8 max-w-2xl mx-auto'>
+            A comprehensive design system built for Next.js applications. 
+            Featuring accessible components, consistent styling, and dark mode support.
+          </p>
 
-          {/* Search Input */}
-          <Input.Root size='medium'>
-            <Input.Wrapper>
-              <Input.Icon as={RiSearchLine} />
-              <Input.Input
-                type='text'
-                placeholder={data.SEARCH_PLACEHOLDER}
-                value={searchQuery}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              />
-            </Input.Wrapper>
-          </Input.Root>
+          <div className='flex flex-wrap gap-4 justify-center'>
+            <Button.Root variant='primary' mode='filled' size='medium' asChild>
+              <Link href='/buttons'>
+                Explore Components
+                <Button.Icon as={RiArrowRightSLine} />
+              </Link>
+            </Button.Root>
+            <Button.Root variant='neutral' mode='stroke' size='medium' asChild>
+              <a href='https://alignui.com' target='_blank' rel='noopener noreferrer'>
+                Documentation
+              </a>
+            </Button.Root>
+          </div>
         </div>
 
-        {/* Tabs */}
-        <TabMenu.Root value={activeTab} onValueChange={setActiveTab}>
-          <TabMenu.List>
-            {tabs.map((tab) => (
-              <TabMenu.Trigger key={tab.value} value={tab.value}>
-                {tab.label}
-              </TabMenu.Trigger>
-            ))}
-          </TabMenu.List>
+        {/* Features Grid */}
+        <div className='grid md:grid-cols-3 gap-6 mb-16'>
+          <div className='rounded-20 bg-bg-weak-50 p-6'>
+            <h3 className='text-title-h5 text-text-strong-950 mb-2'>
+              Accessible
+            </h3>
+            <p className='text-paragraph-sm text-text-sub-600'>
+              Built on Radix UI primitives for full accessibility support
+            </p>
+          </div>
+          
+          <div className='rounded-20 bg-bg-weak-50 p-6'>
+            <h3 className='text-title-h5 text-text-strong-950 mb-2'>
+              Customizable
+            </h3>
+            <p className='text-paragraph-sm text-text-sub-600'>
+              Tailwind CSS based with easy theming and customization
+            </p>
+          </div>
+          
+          <div className='rounded-20 bg-bg-weak-50 p-6'>
+            <h3 className='text-title-h5 text-text-strong-950 mb-2'>
+              Type-Safe
+            </h3>
+            <p className='text-paragraph-sm text-text-sub-600'>
+              Full TypeScript support with excellent developer experience
+            </p>
+          </div>
+        </div>
 
-          {/* FAQ Content */}
-          <div className='mt-8'>
-            {currentFAQs.length === 0 ? (
-              <div className='rounded-10 bg-bg-weak-50 p-8 text-center'>
-                <p className='text-paragraph-md text-text-sub-600'>
-                  {data.NO_RESULTS}
-                </p>
-              </div>
-            ) : hasCategories && !searchQuery ? (
-              // Show nested categories when not searching
-              <div className='space-y-8'>
-                {categoryNames.map((categoryName) => {
-                  const categoryFAQs = (currentFAQsData as FAQCategory)[categoryName];
-                  const filtered = searchFAQs(categoryFAQs, searchQuery);
-                  if (filtered.length === 0) return null;
-                  
-                  return (
-                    <div key={categoryName}>
-                      <h2 className='text-title-h2 text-text-strong-950 mb-4'>
-                        {categoryName.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())}
+        {/* Quick Links */}
+        <div className='text-center'>
+          <h2 className='text-title-h3 text-text-strong-950 mb-6'>
+            Get Started
           </h2>
-                      <Accordion.Root type='single' collapsible className='space-y-3'>
-                        {filtered.map((faq, index) => (
-                          <Accordion.Item
-                            key={`${categoryName}-${index}`}
-                            value={`faq-${categoryName}-${index}`}
-                          >
-                            <Accordion.Header>
-                              <Accordion.Trigger>
-                                <Accordion.Arrow />
-                                <span className='font-semibold'>{faq.TITLE}</span>
-                              </Accordion.Trigger>
-                            </Accordion.Header>
-                            <Accordion.Content>
-                              <FAQContent faq={faq} />
-                            </Accordion.Content>
-                          </Accordion.Item>
-                        ))}
-                      </Accordion.Root>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              // Show flat list (for search results or non-nested tabs)
-              <Accordion.Root type='single' collapsible className='space-y-3'>
-                {currentFAQs.map((faq, index) => (
-                  <Accordion.Item
-                    key={`${activeTab}-${index}`}
-                    value={`faq-${activeTab}-${index}`}
-                  >
-                    <Accordion.Header>
-                      <Accordion.Trigger>
-                        <Accordion.Arrow />
-                        <span className='font-semibold'>{faq.TITLE}</span>
-                      </Accordion.Trigger>
-                    </Accordion.Header>
-                    <Accordion.Content>
-                      <FAQContent faq={faq} />
-                    </Accordion.Content>
-                  </Accordion.Item>
-                ))}
-              </Accordion.Root>
-            )}
+          <div className='flex flex-wrap gap-4 justify-center'>
+            <Button.Root variant='neutral' mode='ghost' size='small' asChild>
+              <Link href='/buttons'>Buttons</Link>
+            </Button.Root>
+            <Button.Root variant='neutral' mode='ghost' size='small' asChild>
+              <a href='https://alignui.com' target='_blank' rel='noopener noreferrer'>
+                Full Documentation
+              </a>
+            </Button.Root>
+            <Button.Root variant='neutral' mode='ghost' size='small' asChild>
+              <a href='https://discord.gg/alignui' target='_blank' rel='noopener noreferrer'>
+                Join Community
+              </a>
+            </Button.Root>
+          </div>
         </div>
-        </TabMenu.Root>
       </div>
-    </div>
-  );
-}
-
-// Component to render FAQ content with HTML support
-function FAQContent({ faq }: { faq: FAQItem }) {
-  return (
-    <div className='space-y-3'>
-      {faq.HEADER && (
-        <div
-          className='text-paragraph-sm text-text-sub-600'
-          dangerouslySetInnerHTML={{ __html: faq.HEADER }}
-        />
-      )}
-      {faq.CONTENT && faq.CONTENT.length > 0 && (
-        <div className='space-y-2'>
-          {faq.CONTENT.map((item, idx) => (
-            <div
-              key={idx}
-              className='text-paragraph-sm text-text-sub-600'
-              dangerouslySetInnerHTML={{ __html: item }}
-            />
-          ))}
-        </div>
-      )}
-      {faq.FOOTER && (
-        <div
-          className='text-paragraph-sm text-text-sub-600 font-medium'
-          dangerouslySetInnerHTML={{ __html: faq.FOOTER }}
-        />
-      )}
     </div>
   );
 }

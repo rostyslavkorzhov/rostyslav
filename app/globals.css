@@ -215,7 +215,6 @@
 
     --social-apple: #000;
     --social-twitter: #010101;
-    --social-github: #24292f;
     --social-notion: #1e2226;
     --social-tidal: #000;
     --social-amazon: #353e47;
@@ -376,7 +375,6 @@
 
     --social-apple: #fff;
     --social-twitter: #fff;
-    --social-github: #fff;
     --social-notion: #fff;
     --social-tidal: #fff;
     --social-amazon: #fff;
@@ -389,17 +387,4 @@
 .remixicon path {
   transform: scale(0.8996);
   transform-origin: center;
-}
-
-/* FAQ content styles */
-.ps-4 {
-  padding-left: 1rem;
-}
-
-.font-arial-mt-bold {
-  font-weight: 700;
-}
-
-.font-sar-symbol {
-  font-family: inherit;
 }
