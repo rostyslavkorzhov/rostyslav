@@ -18,43 +18,18 @@ const navigationItems = [
     href: '/',
   },
   {
-    label: 'Components',
+    label: 'Resources',
     items: [
       {
-        label: 'Buttons',
-        href: '/buttons',
+        label: 'Documentation',
+        href: 'https://alignui.com',
       },
       {
-        label: 'Auth Card',
-        href: '/auth-card',
-      },
-      {
-        label: 'Data',
-        href: '/data',
+        label: 'Discord Community',
+        href: 'https://discord.gg/alignui',
       },
     ],
   },
-  {
-    label: 'Pricing',
-    href: '/pricing',
-  },
-  {
-    label: 'Screenshot Viewer',
-    href: '/screenshot-viewer',
-  },
-      {
-        label: 'Resources',
-        items: [
-          {
-            label: 'Documentation',
-            href: 'https://alignui.com',
-          },
-          {
-            label: 'Discord Community',
-            href: 'https://discord.gg/alignui',
-          },
-        ],
-      },
 ];
 
 export default function Header() {

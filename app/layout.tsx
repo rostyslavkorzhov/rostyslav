@@ -20,8 +20,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'AlignUI - Next.js Starter',
-  description: 'A Next.js starter template with AlignUI design system components',
+  title: 'My App',
+  description: 'Built with AlignUI design system',
 };
 
 export default function RootLayout({
