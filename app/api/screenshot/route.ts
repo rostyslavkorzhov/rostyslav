@@ -33,13 +33,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare URLBOX API request
-    const urlboxUrl = 'https://api.urlbox.com/v1/render/sync';
+    // Prepare URLBOX API request (async endpoint)
+    const urlboxUrl = 'https://api.urlbox.com/v1/render/async';
     const requestBody = {
       url,
-      format: 'png',
+      format: 'webp',
       full_page: true,
-      retina: true,
       quality: 100,
     };
 
@@ -64,44 +63,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check content type to determine if response is JSON or binary image
-    const contentType = response.headers.get('content-type') || '';
-    let imageBuffer: ArrayBuffer;
+    // Async endpoint returns JSON with renderId and statusUrl
+    const jsonData = await response.json();
+    const renderId = jsonData.renderId;
+    const statusUrl = jsonData.statusUrl;
 
-    if (contentType.includes('application/json')) {
-      // URLBOX returned JSON with a renderUrl - fetch the actual image
-      const jsonData = await response.json();
-      const renderUrl = jsonData.renderUrl || jsonData.url;
-      
-      if (!renderUrl) {
-        return NextResponse.json(
-          { error: 'No render URL found in URLBOX response' },
-          { status: 500 }
-        );
-      }
-
-      // Fetch the actual image from the render URL
-      const imageResponse = await fetch(renderUrl);
-      if (!imageResponse.ok) {
-        return NextResponse.json(
-          { error: 'Failed to fetch image from render URL' },
-          { status: 500 }
-        );
-      }
-      imageBuffer = await imageResponse.arrayBuffer();
-    } else {
-      // Direct binary image response
-      imageBuffer = await response.arrayBuffer();
+    if (!renderId || !statusUrl) {
+      return NextResponse.json(
+        { error: 'Invalid response from URLBOX API: missing renderId or statusUrl' },
+        { status: 500 }
+      );
     }
-    
-    // Convert to base64
-    const base64Image = Buffer.from(imageBuffer).toString('base64');
-    const dataUrl = `data:image/png;base64,${base64Image}`;
 
-    // Return the image data along with metadata
+    // Return renderId and statusUrl for client-side polling
     return NextResponse.json({
       success: true,
-      imageData: dataUrl,
+      renderId,
+      statusUrl,
       metadata: {
         url,
         brandName,

@@ -94,22 +94,24 @@ export default function ScreenshotForm() {
         throw new Error(data.error || data.details || 'Failed to capture screenshot');
       }
 
-      if (!data.success || !data.imageData) {
-        throw new Error('Invalid response from server');
+      if (!data.success || !data.renderId || !data.statusUrl) {
+        throw new Error('Invalid response from server: missing renderId or statusUrl');
       }
 
-      // Save to localStorage
+      // Save to localStorage with "in_progress" status
       saveScreenshot({
         url: url.trim(),
         brandName: brandName.trim(),
         pageType,
-        imageData: data.imageData,
+        status: 'in_progress',
+        renderId: data.renderId,
+        statusUrl: data.statusUrl,
       });
 
       // Show success notification
       notification({
-        title: 'Screenshot captured!',
-        description: `Screenshot saved for ${brandName.trim()}`,
+        title: 'Screenshot queued!',
+        description: `Screenshot is being processed for ${brandName.trim()}. It will appear in the table below when ready.`,
         status: 'success',
       });
 

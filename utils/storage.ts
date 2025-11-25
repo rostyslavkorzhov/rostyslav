@@ -1,10 +1,15 @@
+export type ScreenshotStatus = 'completed' | 'in_progress' | 'failed';
+
 export interface ScreenshotData {
   id: string;
   url: string;
   brandName: string;
   pageType: string;
   timestamp: number;
-  imageData: string; // base64 data URL
+  status: ScreenshotStatus;
+  imageData?: string; // base64 data URL (optional for in_progress)
+  renderId?: string; // URLBOX render ID for async tracking
+  statusUrl?: string; // URLBOX status URL for polling
 }
 
 const STORAGE_KEY = 'urlbox_screenshots';
@@ -23,7 +28,10 @@ export function saveScreenshot(data: {
   url: string;
   brandName: string;
   pageType: string;
-  imageData: string;
+  status?: ScreenshotStatus;
+  imageData?: string;
+  renderId?: string;
+  statusUrl?: string;
 }): ScreenshotData {
   const screenshot: ScreenshotData = {
     id: generateId(),
@@ -31,7 +39,10 @@ export function saveScreenshot(data: {
     brandName: data.brandName,
     pageType: data.pageType,
     timestamp: Date.now(),
+    status: data.status || 'completed',
     imageData: data.imageData,
+    renderId: data.renderId,
+    statusUrl: data.statusUrl,
   };
 
   const existing = getAllScreenshots();
@@ -51,7 +62,40 @@ export function saveScreenshot(data: {
 }
 
 /**
- * Get all stored screenshots
+ * Update screenshot status and image data when async render completes
+ */
+export function updateScreenshotStatus(
+  id: string,
+  updates: {
+    status: ScreenshotStatus;
+    imageData?: string;
+    renderId?: string;
+    statusUrl?: string;
+  }
+): boolean {
+  const screenshots = getAllScreenshots();
+  const index = screenshots.findIndex((s) => s.id === id);
+  
+  if (index === -1) {
+    return false; // Screenshot not found
+  }
+
+  screenshots[index] = {
+    ...screenshots[index],
+    ...updates,
+  };
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(screenshots));
+    return true;
+  } catch (error) {
+    console.error('Error updating screenshot status:', error);
+    return false;
+  }
+}
+
+/**
+ * Get all stored screenshots (sorted by timestamp, newest first)
  */
 export function getAllScreenshots(): ScreenshotData[] {
   if (typeof window === 'undefined') {
@@ -63,11 +107,20 @@ export function getAllScreenshots(): ScreenshotData[] {
     if (!stored) {
       return [];
     }
-    return JSON.parse(stored) as ScreenshotData[];
+    const screenshots = JSON.parse(stored) as ScreenshotData[];
+    // Sort by timestamp (newest first)
+    return screenshots.sort((a, b) => b.timestamp - a.timestamp);
   } catch (error) {
     console.error('Error reading screenshots from localStorage:', error);
     return [];
   }
+}
+
+/**
+ * Get all in-progress screenshots
+ */
+export function getInProgressScreenshots(): ScreenshotData[] {
+  return getAllScreenshots().filter((s) => s.status === 'in_progress');
 }
 
 /**
