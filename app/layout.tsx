@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Inter as FontSans } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
@@ -8,9 +7,10 @@ import { Provider as TooltipProvider } from '@/components/ui/tooltip';
 import { NotificationProvider } from '@/components/ui/notification-provider';
 import Header from '@/components/header';
 
-const inter = FontSans({
-  subsets: ['latin'],
+const switzer = localFont({
+  src: './fonts/Switzer-Variable.woff2',
   variable: '--font-sans',
+  weight: '100 900',
 });
 
 const geistMono = localFont({
@@ -33,7 +33,7 @@ export default function RootLayout({
     <html
       lang='en'
       suppressHydrationWarning
-      className={cn(inter.variable, geistMono.variable, 'antialiased')}
+      className={cn(switzer.variable, geistMono.variable, 'antialiased')}
     >
       <body className='bg-bg-white-0 text-text-strong-950'>
         <ThemeProvider attribute='class'>

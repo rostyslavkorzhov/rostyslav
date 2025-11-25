@@ -7,7 +7,6 @@ export const texts = {
     '3.5rem',
     {
       lineHeight: '4rem',
-      letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
@@ -15,7 +14,6 @@ export const texts = {
     '3rem',
     {
       lineHeight: '3.5rem',
-      letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
@@ -23,7 +21,6 @@ export const texts = {
     '2.5rem',
     {
       lineHeight: '3rem',
-      letterSpacing: '-0.01em',
       fontWeight: '500',
     },
   ],
@@ -31,7 +28,6 @@ export const texts = {
     '2rem',
     {
       lineHeight: '2.5rem',
-      letterSpacing: '-0.005em',
       fontWeight: '500',
     },
   ],
@@ -39,7 +35,6 @@ export const texts = {
     '1.5rem',
     {
       lineHeight: '2rem',
-      letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
@@ -47,7 +42,6 @@ export const texts = {
     '1.25rem',
     {
       lineHeight: '1.75rem',
-      letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
@@ -55,7 +49,6 @@ export const texts = {
     '1.5rem',
     {
       lineHeight: '2rem',
-      letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
@@ -63,7 +56,6 @@ export const texts = {
     '1.125rem',
     {
       lineHeight: '1.5rem',
-      letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
@@ -71,7 +63,6 @@ export const texts = {
     '1rem',
     {
       lineHeight: '1.5rem',
-      letterSpacing: '-0.011em',
       fontWeight: '500',
     },
   ],
@@ -79,7 +70,6 @@ export const texts = {
     '.875rem',
     {
       lineHeight: '1.25rem',
-      letterSpacing: '-0.006em',
       fontWeight: '500',
     },
   ],
@@ -87,7 +77,6 @@ export const texts = {
     '.75rem',
     {
       lineHeight: '1rem',
-      letterSpacing: '0em',
       fontWeight: '500',
     },
   ],
@@ -95,7 +84,6 @@ export const texts = {
     '1.5rem',
     {
       lineHeight: '2rem',
-      letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
@@ -103,7 +91,6 @@ export const texts = {
     '1.125rem',
     {
       lineHeight: '1.5rem',
-      letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
@@ -111,7 +98,6 @@ export const texts = {
     '1rem',
     {
       lineHeight: '1.5rem',
-      letterSpacing: '-0.011em',
       fontWeight: '400',
     },
   ],
@@ -119,7 +105,6 @@ export const texts = {
     '.875rem',
     {
       lineHeight: '1.25rem',
-      letterSpacing: '-0.006em',
       fontWeight: '400',
     },
   ],
@@ -127,7 +112,6 @@ export const texts = {
     '.75rem',
     {
       lineHeight: '1rem',
-      letterSpacing: '0em',
       fontWeight: '400',
     },
   ],
@@ -135,7 +119,6 @@ export const texts = {
     '1rem',
     {
       lineHeight: '1.5rem',
-      letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
@@ -143,7 +126,6 @@ export const texts = {
     '.875rem',
     {
       lineHeight: '1.25rem',
-      letterSpacing: '0.06em',
       fontWeight: '500',
     },
   ],
@@ -151,7 +133,6 @@ export const texts = {
     '.75rem',
     {
       lineHeight: '1rem',
-      letterSpacing: '0.04em',
       fontWeight: '500',
     },
   ],
@@ -159,7 +140,6 @@ export const texts = {
     '.6875rem',
     {
       lineHeight: '.75rem',
-      letterSpacing: '0.02em',
       fontWeight: '500',
     },
   ],
@@ -167,7 +147,6 @@ export const texts = {
     '1.125rem',
     {
       lineHeight: '2rem',
-      letterSpacing: '-0.015em',
       fontWeight: '500',
     },
   ],
@@ -175,7 +154,6 @@ export const texts = {
     '1.125rem',
     {
       lineHeight: '2rem',
-      letterSpacing: '-0.015em',
       fontWeight: '400',
     },
   ],
