@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { screenshotCaptureSchema } from '@/lib/validations/screenshot.schema';
-import { getScreenshotService } from '@/lib/services';
+import { aiAnalysisSchema } from '@/lib/validations/ai-analysis.schema';
+import { getAIAnalysisService } from '@/lib/services';
 import { handleError } from '@/lib/errors/error-handler';
 import { ValidationError } from '@/lib/errors/app-error';
 
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate request body with Zod schema
-    const validationResult = screenshotCaptureSchema.safeParse(body);
+    const validationResult = aiAnalysisSchema.safeParse(body);
     if (!validationResult.success) {
       const errors = validationResult.error.issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ');
       throw new ValidationError(`Validation failed: ${errors}`, validationResult.error.issues);
@@ -20,25 +20,17 @@ export async function POST(request: NextRequest) {
     const validatedData = validationResult.data;
 
     // Get service instance
-    const screenshotService = getScreenshotService();
+    const aiAnalysisService = getAIAnalysisService();
 
-    // Capture screenshot
-    const result = await screenshotService.capture({
-      url: validatedData.url,
-      brandName: validatedData.brandName,
-      pageType: validatedData.pageType,
+    // Analyze screenshot
+    const result = await aiAnalysisService.analyzeScreenshot({
+      imageData: validatedData.imageData,
     });
 
-    // Return success response (maintain backward compatibility with client)
+    // Return success response (maintain backward compatibility)
     return NextResponse.json({
       success: true,
-      renderId: result.renderId,
-      statusUrl: result.statusUrl,
-      metadata: {
-        url: validatedData.url,
-        brandName: validatedData.brandName,
-        pageType: validatedData.pageType,
-      },
+      highlights: result.highlights,
     });
   } catch (error) {
     return handleError(error);

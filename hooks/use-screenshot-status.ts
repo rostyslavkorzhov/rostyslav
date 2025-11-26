@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { getInProgressScreenshots, updateScreenshotStatus } from '@/utils/storage';
+import { 
+  getInProgressScreenshots, 
+  updateScreenshotStatus, 
+  updateScreenshotHighlights,
+  hasHighlights,
+} from '@/utils/storage';
 
 /**
  * Custom hook to poll for status updates on in-progress screenshots
@@ -10,6 +15,48 @@ export function useScreenshotStatus() {
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    /**
+     * Analyze a screenshot to generate conversion highlights
+     */
+    const analyzeScreenshot = async (screenshotId: string, imageData: string) => {
+      try {
+        const response = await fetch('/api/screenshot/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imageData }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error('Failed to analyze screenshot:', {
+            screenshotId,
+            error: data.error,
+            details: data.details,
+          });
+          return;
+        }
+
+        if (data.success && data.highlights) {
+          // Save highlights to storage
+          const updated = updateScreenshotHighlights(screenshotId, data.highlights);
+          if (updated) {
+            console.log('Highlights saved for screenshot:', screenshotId);
+          } else {
+            console.error('Failed to save highlights:', screenshotId);
+          }
+        }
+      } catch (error) {
+        console.error('Error analyzing screenshot:', {
+          screenshotId,
+          error,
+        });
+        // Fail silently - highlights are optional
+      }
+    };
+
     const pollStatus = async () => {
       const inProgressScreenshots = getInProgressScreenshots();
 
@@ -75,6 +122,11 @@ export function useScreenshotStatus() {
               });
               if (updated) {
                 console.log('Screenshot completed:', screenshot.id);
+                
+                // Trigger AI analysis if highlights don't exist
+                if (!hasHighlights(screenshot.id)) {
+                  analyzeScreenshot(screenshot.id, data.imageData);
+                }
               } else {
                 console.error('Failed to update screenshot status:', screenshot.id);
               }

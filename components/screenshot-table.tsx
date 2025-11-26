@@ -13,14 +13,13 @@ import {
   Root as ModalRoot,
   Content as ModalContent,
   Header as ModalHeader,
-  Title as ModalTitle,
-  Description as ModalDescription,
   Body as ModalBody,
 } from '@/components/ui/modal';
 import { Root as DividerRoot } from '@/components/ui/divider';
 import { RiLoader4Line } from '@remixicon/react';
 import { getAllScreenshots, ScreenshotData } from '@/utils/storage';
 import { useScreenshotStatus } from '@/hooks/use-screenshot-status';
+import ScreenshotHighlights from '@/components/screenshot-highlights';
 
 function StatusBadge({ status }: { status: ScreenshotData['status'] }) {
   const baseClasses = 'inline-flex items-center rounded-lg px-2.5 py-1 text-label-sm';
@@ -228,10 +227,10 @@ export default function ScreenshotTable() {
                   {selectedScreenshot.status === 'completed' && selectedScreenshot.imageData ? (
                     <div className="relative">
                       <div className="relative h-[500px] overflow-y-auto rounded-lg border border-stroke-soft-200 shadow-regular-xs bg-bg-white-0">
-                        <img
-                          src={selectedScreenshot.imageData}
-                          alt={`${selectedScreenshot.brandName} ${selectedScreenshot.pageType}`}
-                          className="w-full h-auto"
+                        <ScreenshotHighlights
+                          imageData={selectedScreenshot.imageData}
+                          highlights={selectedScreenshot.highlights || []}
+                          className="w-full"
                         />
                         {/* White gradient at bottom to indicate scrollable content */}
                         <div className="sticky bottom-0 h-20 bg-gradient-to-t from-bg-white-0 to-transparent pointer-events-none" />
