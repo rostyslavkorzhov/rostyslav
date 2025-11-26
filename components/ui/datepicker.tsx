@@ -85,8 +85,12 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: () => <RiArrowLeftSLine className='size-5' />,
-        IconRight: () => <RiArrowRightSLine className='size-5' />,
+        Chevron: ({ orientation }) => {
+          if (orientation === 'left') {
+            return <RiArrowLeftSLine className='size-5' />;
+          }
+          return <RiArrowRightSLine className='size-5' />;
+        },
       }}
       {...rest}
     />

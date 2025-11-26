@@ -112,8 +112,6 @@ export const inputVariants = tv({
         root: [
           // base
           'before:ring-error-base',
-          // base
-          'hover:before:ring-error-base hover:[&:not(&:has(input:focus)):has(>:only-child)]:before:ring-error-base',
           // focus
           'has-[input:focus]:shadow-button-error-focus has-[input:focus]:before:ring-error-base',
         ],
@@ -121,7 +119,7 @@ export const inputVariants = tv({
       false: {
         root: [
           // hover
-          'hover:[&:not(:has(input:focus)):has(>:only-child)]:before:ring-transparent',
+          '[&:not(:has(input:focus)):has(>:only-child)]:hover:before:ring-transparent',
         ],
       },
     },
