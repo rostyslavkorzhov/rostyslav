@@ -36,7 +36,7 @@ Your current Next.js application has a **functional but not scalable** architect
 ### Proposed Directory Structure
 
 ```
-alignui-nextjs-typescript-starter/
+rostyslav/
 ├── app/                          # Next.js App Router
 │   ├── api/                      # API routes (thin controllers)
 │   │   ├── auth/                 # Auth endpoints
