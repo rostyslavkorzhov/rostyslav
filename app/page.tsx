@@ -68,10 +68,10 @@ export default function Home() {
       <div className='mx-auto max-w-7xl'>
         <div className='mb-8 text-center'>
           <h1 className='text-title-h1 text-text-strong-950 mb-4'>
-            Best of Ecom
+            Welcome
           </h1>
           <p className='text-paragraph-lg text-text-sub-600'>
-            Get inspired by Tier A eCommerce pages
+            Let's work on this together!
           </p>
         </div>
 
