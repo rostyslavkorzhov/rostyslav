@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import * as Button from '@/components/ui/button';
+import { ErrorState } from '@/components/ui/error-state';
 
 export default function Error({
   error,
@@ -18,17 +19,13 @@ export default function Error({
 
   return (
     <div className='container mx-auto flex flex-1 items-center justify-center px-5 py-8'>
-      <div className='mx-auto max-w-md text-center'>
-        <h1 className='text-title-h1 text-text-strong-950 mb-4'>
-          Something went wrong!
-        </h1>
-        <p className='text-paragraph-md text-text-sub-600 mb-8'>
-          {error.message || 'An unexpected error occurred. Please try again.'}
-        </p>
-        <div className='flex gap-4 justify-center'>
-          <Button.Root variant='primary' onClick={reset}>
-            Try again
-          </Button.Root>
+      <div className='mx-auto max-w-md'>
+        <ErrorState
+          title='Something went wrong!'
+          message={error.message || 'An unexpected error occurred. Please try again.'}
+          onRetry={reset}
+        />
+        <div className='mt-4 flex justify-center'>
           <Button.Root variant='neutral' mode='stroke' asChild>
             <Link href='/'>Go back home</Link>
           </Button.Root>

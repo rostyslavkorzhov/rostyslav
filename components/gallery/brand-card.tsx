@@ -14,7 +14,7 @@ export function BrandCard({ brand }: BrandCardProps) {
 
   return (
     <Link href={`/brands/${brand.slug}`}>
-      <div className='group rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-lg transition-shadow'>
+      <div className='group rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-regular-md transition-shadow'>
         {thumbnailUrl && (
           <div className='aspect-video relative bg-bg-weak-50'>
             <Image

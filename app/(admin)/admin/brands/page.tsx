@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { LoadingState } from '@/components/ui/loading-state';
 import type { Brand } from '@/types';
 
 export default function BrandsPage() {
@@ -38,7 +39,7 @@ export default function BrandsPage() {
       </div>
 
       {loading ? (
-        <div>Loading...</div>
+        <LoadingState />
       ) : brands.length === 0 ? (
         <div className='rounded-lg border border-stroke-soft-200 p-8 text-center'>
           <p className='text-text-sub-600 mb-4'>No brands yet</p>

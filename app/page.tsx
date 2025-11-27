@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BrandGrid } from '@/components/gallery/brand-grid';
 import { FilterBar } from '@/components/gallery/filter-bar';
+import { LoadingState } from '@/components/ui/loading-state';
 import type { BrandWithPages } from '@/types';
 import type { GetBrandsResponse } from '@/types/api';
 
@@ -84,9 +85,7 @@ export default function Home() {
         />
 
         {loading ? (
-          <div className='text-center py-12'>
-            <p className='text-text-sub-600'>Loading brands...</p>
-          </div>
+          <LoadingState message='Loading brands...' />
         ) : (
           <BrandGrid brands={brands} />
         )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { BrandCard } from './brand-card';
+import { EmptyState } from '@/components/ui/empty-state';
 import type { BrandWithPages } from '@/types';
 
 interface BrandGridProps {
@@ -10,9 +11,10 @@ interface BrandGridProps {
 export function BrandGrid({ brands }: BrandGridProps) {
   if (brands.length === 0) {
     return (
-      <div className='text-center py-12'>
-        <p className='text-text-sub-600'>No brands found</p>
-      </div>
+      <EmptyState
+        title='No brands found'
+        description='Try adjusting your filters to see more results.'
+      />
     );
   }
 

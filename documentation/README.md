@@ -24,6 +24,7 @@ Detailed analysis of the application architecture, recommended patterns, and mig
 - **Deployment**: Follow the [Deployment Plan](./deployment-plan.md) when ready to set up cloud hosting
 - **API Reference**: Check [API Documentation](./api-documentation.md) for endpoint details
 - **Configuration**: Review [Environment Variables](./environment-variables.md) for required setup
+- **Project Changes**: View the [Changelog](../changelog/README.md) for a history of major updates
 
 ---
 

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
 import type { BrandWithPages } from '@/types';
 import type { GetBrandResponse } from '@/types/api';
 
@@ -44,7 +46,7 @@ export default function BrandDetail() {
   if (loading) {
     return (
       <div className='container mx-auto px-5 py-16'>
-        <div className='text-center'>Loading...</div>
+        <LoadingState />
       </div>
     );
   }
@@ -52,7 +54,10 @@ export default function BrandDetail() {
   if (!brand) {
     return (
       <div className='container mx-auto px-5 py-16'>
-        <div className='text-center'>Brand not found</div>
+        <ErrorState
+          title='Brand not found'
+          message='The brand you are looking for does not exist or has been removed.'
+        />
       </div>
     );
   }
@@ -76,7 +81,7 @@ export default function BrandDetail() {
               const thumbnailUrl = page.desktop_screenshot_url || page.mobile_screenshot_url;
               return (
                 <Link key={page.id} href={`/pages/${page.id}`}>
-                  <div className='rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-lg transition-shadow'>
+                  <div className='rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-regular-md transition-shadow'>
                     {thumbnailUrl && (
                       <div className='aspect-video relative bg-bg-weak-50'>
                         <Image

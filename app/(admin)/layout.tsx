@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { LoadingState } from '@/components/ui/loading-state';
 
 export default function AdminLayout({
   children,
@@ -22,7 +23,7 @@ export default function AdminLayout({
   if (loading) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
-        <div>Loading...</div>
+        <LoadingState />
       </div>
     );
   }

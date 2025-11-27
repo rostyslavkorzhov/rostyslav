@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
+import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
+import * as Button from '@/components/ui/button';
 import type { Page, Brand } from '@/types';
 import type { GetPageResponse } from '@/types/api';
 
@@ -38,7 +41,7 @@ export default function PageDetail() {
   if (loading) {
     return (
       <div className='container mx-auto px-5 py-16'>
-        <div className='text-center'>Loading...</div>
+        <LoadingState />
       </div>
     );
   }
@@ -46,7 +49,10 @@ export default function PageDetail() {
   if (!page) {
     return (
       <div className='container mx-auto px-5 py-16'>
-        <div className='text-center'>Page not found</div>
+        <ErrorState
+          title='Page not found'
+          message='The page you are looking for does not exist or has been removed.'
+        />
       </div>
     );
   }
@@ -63,35 +69,31 @@ export default function PageDetail() {
           {/* Screenshot Viewer */}
           <div>
             <div className='mb-4 flex gap-2'>
-              <button
+              <Button.Root
+                variant={device === 'desktop' ? 'primary' : 'neutral'}
+                mode={device === 'desktop' ? 'filled' : 'ghost'}
+                size='small'
                 onClick={() => setDevice('desktop')}
-                className={`px-4 py-2 rounded-lg ${
-                  device === 'desktop'
-                    ? 'bg-primary-base text-white'
-                    : 'bg-bg-weak-50 text-text-sub-600'
-                }`}
               >
                 Desktop
-              </button>
-              <button
+              </Button.Root>
+              <Button.Root
+                variant={device === 'mobile' ? 'primary' : 'neutral'}
+                mode={device === 'mobile' ? 'filled' : 'ghost'}
+                size='small'
                 onClick={() => setDevice('mobile')}
-                className={`px-4 py-2 rounded-lg ${
-                  device === 'mobile'
-                    ? 'bg-primary-base text-white'
-                    : 'bg-bg-weak-50 text-text-sub-600'
-                }`}
               >
                 Mobile
-              </button>
+              </Button.Root>
             </div>
 
             {screenshotUrl ? (
               <div className='relative rounded-lg border border-stroke-soft-200 overflow-hidden bg-bg-weak-50'>
                 {!isAuthenticated && (
-                  <div className='absolute inset-0 bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center'>
-                    <div className='text-center text-white p-6'>
-                      <p className='text-lg font-semibold mb-2'>Sign up to view</p>
-                      <p className='text-sm opacity-90'>
+                  <div className='absolute inset-0 bg-overlay backdrop-blur-sm z-10 flex items-center justify-center'>
+                    <div className='text-center text-static-white p-6'>
+                      <p className='text-title-h5 mb-2'>Sign up to view</p>
+                      <p className='text-paragraph-sm opacity-90'>
                         Create a free account to see full screenshots
                       </p>
                     </div>
