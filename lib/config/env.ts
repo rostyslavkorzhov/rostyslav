@@ -9,7 +9,10 @@ const isServer = typeof window === 'undefined';
  * Client-accessible environment variable schema
  */
 const clientEnvSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.string().min(1, 'NEXT_PUBLIC_SUPABASE_URL is required'),
+  NEXT_PUBLIC_SUPABASE_URL: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_SUPABASE_URL is required')
+    .url('NEXT_PUBLIC_SUPABASE_URL must be a valid HTTP or HTTPS URL'),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, 'NEXT_PUBLIC_SUPABASE_ANON_KEY is required'),
 });
 
@@ -54,7 +57,20 @@ function parseClientEnv(): ClientEnv {
 
   if (!parsed.success) {
     const errors = parsed.error.issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ');
-    throw new Error(`Environment variable validation failed: ${errors}`);
+    const missingVars = parsed.error.issues
+      .filter((err) => err.code === 'too_small' || err.code === 'invalid_type')
+      .map((err) => err.path.join('.'))
+      .join(', ');
+    
+    let errorMessage = `Environment variable validation failed: ${errors}`;
+    if (missingVars) {
+      errorMessage += `\n\nMissing or invalid variables: ${missingVars}`;
+      errorMessage += `\n\nTo fix this:\n`;
+      errorMessage += `1. Copy .env.local.example to .env.local\n`;
+      errorMessage += `2. Fill in your environment variables\n`;
+      errorMessage += `3. Or use Vercel CLI: npx vercel env pull .env.local\n`;
+    }
+    throw new Error(errorMessage);
   }
 
   cachedClientEnv = parsed.data;
@@ -91,7 +107,20 @@ function parseEnv(): Env {
 
   if (!parsed.success) {
     const errors = parsed.error.issues.map((err) => `${err.path.join('.')}: ${err.message}`).join(', ');
-    throw new Error(`Environment variable validation failed: ${errors}`);
+    const missingVars = parsed.error.issues
+      .filter((err) => err.code === 'too_small' || err.code === 'invalid_type')
+      .map((err) => err.path.join('.'))
+      .join(', ');
+    
+    let errorMessage = `Environment variable validation failed: ${errors}`;
+    if (missingVars) {
+      errorMessage += `\n\nMissing or invalid variables: ${missingVars}`;
+      errorMessage += `\n\nTo fix this:\n`;
+      errorMessage += `1. Copy .env.local.example to .env.local\n`;
+      errorMessage += `2. Fill in your environment variables\n`;
+      errorMessage += `3. Or use Vercel CLI: npx vercel env pull .env.local\n`;
+    }
+    throw new Error(errorMessage);
   }
 
   cachedEnv = parsed.data;

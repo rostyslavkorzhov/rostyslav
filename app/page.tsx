@@ -32,22 +32,52 @@ export default function Home() {
         if (!response.ok) {
           // Try to parse error response
           let errorMessage = 'Failed to load brands';
+          let errorData: unknown = null;
+          let rawResponseText = '';
+          
           try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-            console.error('API Error:', {
-              status: response.status,
-              statusText: response.statusText,
-              error: errorData,
-            });
+            rawResponseText = await response.text();
+            if (rawResponseText) {
+              try {
+                errorData = JSON.parse(rawResponseText);
+                // Check if errorData has the expected structure
+                if (errorData && typeof errorData === 'object' && 'error' in errorData) {
+                  errorMessage = String((errorData as { error?: string }).error) || errorMessage;
+                } else if (errorData && typeof errorData === 'object') {
+                  // Check if it's an empty object
+                  const hasKeys = Object.keys(errorData).length > 0;
+                  if (!hasKeys) {
+                    errorData = null; // Treat empty object as no data
+                  }
+                }
+              } catch {
+                // If JSON parsing fails, use the text as error message
+                errorMessage = rawResponseText || errorMessage;
+              }
+            }
           } catch {
-            // If JSON parsing fails, use status text
+            // If reading response fails, use status text
             errorMessage = `${errorMessage}: ${response.statusText} (${response.status})`;
-            console.error('API Error:', {
-              status: response.status,
-              statusText: response.statusText,
-            });
           }
+          
+          // Build error log object
+          const errorLog: Record<string, unknown> = {
+            status: response.status,
+            statusText: response.statusText,
+            url: response.url,
+          };
+          
+          // Only include error data if it exists and has content
+          if (errorData !== null) {
+            errorLog.error = errorData;
+          } else if (rawResponseText) {
+            errorLog.rawResponse = rawResponseText;
+          } else {
+            errorLog.error = 'No error details available';
+          }
+          
+          console.error('API Error:', errorLog);
+          
           throw new Error(errorMessage);
         }
 
