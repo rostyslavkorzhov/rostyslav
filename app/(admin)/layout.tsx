@@ -45,12 +45,6 @@ export default function AdminLayout({
             >
               Dashboard
             </Link>
-            <Link
-              href='/admin/brands'
-              className='block rounded-lg px-4 py-2 text-text-sub-600 hover:bg-bg-weak-50'
-            >
-              Brands
-            </Link>
           </nav>
         </div>
       </aside>

@@ -3,6 +3,5 @@
  */
 export * from './api';
 export * from './database';
-export * from './brand';
 export * from './page';
 

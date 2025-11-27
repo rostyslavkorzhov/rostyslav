@@ -2,55 +2,14 @@
  * API request and response types
  */
 
-import type { Brand, BrandWithPages, Page, PageWithRelations } from './database';
-import type { BrandFilters, CreateBrandInput, UpdateBrandInput } from './brand';
+import type { PageWithRelations } from './database';
 import type { CreatePageInput, CaptureScreenshotRequest } from './page';
-
-/**
- * Public API: Get brands response
- */
-export interface GetBrandsResponse {
-  data: BrandWithPages[];
-  count: number;
-  hasMore: boolean;
-}
-
-/**
- * Public API: Get brand by slug response
- */
-export interface GetBrandResponse {
-  data: BrandWithPages;
-}
 
 /**
  * Public API: Get page by id response
  */
 export interface GetPageResponse {
   data: PageWithRelations;
-}
-
-/**
- * Admin API: Create brand request
- */
-export interface CreateBrandRequest extends CreateBrandInput {}
-
-/**
- * Admin API: Update brand request
- */
-export interface UpdateBrandRequest extends UpdateBrandInput {}
-
-/**
- * Admin API: Create brand response
- */
-export interface CreateBrandResponse {
-  data: Brand;
-}
-
-/**
- * Admin API: Update brand response
- */
-export interface UpdateBrandResponse {
-  data: Brand;
 }
 
 /**
