@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Your Next.js application has undergone **significant architectural improvements** and now follows a scalable, maintainable structure. The core refactoring has been completed, with service layers, client abstractions, error handling, and validation in place. URLBox and Supabase integrations are properly abstracted, and authentication is implemented.
+Your Next.js application has undergone **significant architectural improvements** and now follows a scalable, maintainable structure. The core refactoring has been completed, with service layers, client abstractions, error handling, and validation in place. Supabase integration is properly abstracted, and authentication is implemented.
 
 **Current Status:** Foundation and core services are complete. Remaining work includes Stripe payment integration and enhanced auth middleware/route protection.
 
@@ -67,7 +67,6 @@ bestofecom/
 │   │   └── user.service.ts
 │   │
 │   ├── clients/                  # External API clients
-│   │   ├── urlbox.client.ts      # URLBox API wrapper ✅
 │   │   ├── supabase.client.ts    # Supabase client + queries ✅
 │   │   ├── supabase-server.ts    # Server-side Supabase client ✅
 │   │   └── stripe.client.ts      # Stripe SDK wrapper (TODO)
@@ -131,7 +130,6 @@ The actual implementation follows the recommended architecture with some structu
 - **Assessment:** Core auth functionality complete. Missing: middleware, route guards, enhanced session utilities.
 
 **Client Structure:**
-- ✅ `lib/clients/urlbox.client.ts` - URLBox API wrapper
 - ✅ `lib/clients/supabase.client.ts` - Supabase client + query classes
 - ✅ `lib/clients/supabase-server.ts` - Server-side Supabase client
 - ❌ `lib/clients/stripe.client.ts` - Not yet implemented
@@ -151,7 +149,7 @@ The actual implementation follows the recommended architecture with some structu
 
 - **API Routes** → Thin controllers that validate, call services, return responses
 - **Services** → Business logic and orchestration
-- **Clients** → External API integrations (URLBox, Stripe, etc.)
+- **Clients** → External API integrations (Stripe, etc.)
 - **Database** → Data access layer (Supabase queries)
 
 ### 2. **Dependency Injection**
@@ -160,18 +158,18 @@ Services should receive clients as dependencies, making testing easier:
 
 ```typescript
 // ❌ Bad: Direct instantiation
-class ScreenshotService {
-  async capture() {
-    const client = new URLBoxClient();
+class PaymentService {
+  async processPayment() {
+    const client = new StripeClient();
     // ...
   }
 }
 
 // ✅ Good: Dependency injection
-class ScreenshotService {
-  constructor(private urlboxClient: URLBoxClient) {}
-  async capture() {
-    // Use this.urlboxClient
+class PaymentService {
+  constructor(private stripeClient: StripeClient) {}
+  async processPayment() {
+    // Use this.stripeClient
   }
 }
 ```
@@ -183,9 +181,9 @@ Centralize all environment variables:
 ```typescript
 // lib/config/env.ts
 export const config = {
-  urlbox: {
-    apiSecret: process.env.URLBOX_API_SECRET!,
-    baseUrl: 'https://api.urlbox.com/v1',
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY!,
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
   },
   // ... etc
 } as const;
@@ -230,8 +228,8 @@ type Screenshot = Database['public']['tables']['screenshots']['Row'];
 4. ✅ Create `types/` structure - Type definitions
 
 ### Phase 2: Extract Services (Critical)
-1. ✅ Create `lib/clients/urlbox.client.ts` - Extract URLBox logic
-2. ✅ Create `lib/services/screenshot.service.ts` - Business logic
+1. ✅ Create service layer structure
+2. ✅ Create business logic services
 3. ✅ Refactor API routes to use services
 
 ### Phase 3: Database Layer ✅ COMPLETE
@@ -295,46 +293,35 @@ type Screenshot = Database['public']['tables']['screenshots']['Row'];
 ### Before (Original Architecture)
 
 ```typescript
-// app/api/screenshot/route.ts
+// app/api/pages/route.ts
 export async function POST(request: NextRequest) {
-  const apiSecret = process.env.URLBOX_API_SECRET; // ❌ Direct env access
-  const response = await fetch('https://api.urlbox.com/v1/render/async', { // ❌ Direct API call
-    // ... business logic mixed with HTTP handling
-  });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL; // ❌ Direct env access
+  // ... business logic mixed with HTTP handling
 }
 ```
 
 ### After (Current Implementation) ✅
 
 ```typescript
-// lib/clients/urlbox.client.ts
-export class URLBoxClient {
-  constructor(private config: URLBoxConfig) {}
-  async captureScreenshot(url: string): Promise<URLBoxResponse> {
-    // API call logic here
-  }
-}
-
-// lib/services/screenshot.service.ts
-export class ScreenshotService {
-  constructor(private urlboxClient: URLBoxClient) {}
-  async capture(url: string, metadata: ScreenshotMetadata) {
+// lib/services/page.service.ts
+export class PageService {
+  constructor(private pageQueries: PageQueries) {}
+  async getPageById(id: string): Promise<Page> {
     // Business logic here
-    return await this.urlboxClient.captureScreenshot(url);
+    return await this.pageQueries.findById(id);
   }
 }
 
-// app/api/screenshot/route.ts
-export async function POST(request: NextRequest) {
+// app/api/pages/[id]/route.ts
+export async function GET(request: NextRequest) {
   try {
-    const body = await request.json();
-    const validated = screenshotCaptureSchema.safeParse(body); // ✅ Validation
+    const validated = pageIdSchema.safeParse(params); // ✅ Validation
     if (!validated.success) {
       throw new ValidationError(...); // ✅ Error handling
     }
-    const service = getScreenshotService(); // ✅ Service via singleton
-    const result = await service.capture(validated.data.url, 'desktop'); // ✅ Service call
-    return NextResponse.json({ success: true, ...result }); // ✅ Thin controller
+    const service = getPageService(); // ✅ Service via singleton
+    const result = await service.getPageById(validated.data.id); // ✅ Service call
+    return NextResponse.json({ success: true, data: result }); // ✅ Thin controller
   } catch (error) {
     return handleError(error); // ✅ Centralized error handling
   }
@@ -367,7 +354,7 @@ export async function POST(request: NextRequest) {
 **Architecture refactoring is largely complete.** The application now follows a scalable, maintainable structure with:
 
 - ✅ Service layer with dependency injection
-- ✅ Client abstractions for external APIs (URLBox, Supabase)
+- ✅ Client abstractions for external APIs (Supabase)
 - ✅ Centralized configuration and error handling
 - ✅ Input validation with Zod schemas
 - ✅ Type-safe database queries

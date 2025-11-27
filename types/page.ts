@@ -50,15 +50,3 @@ export interface PageFilters {
   limit?: number;
   offset?: number;
 }
-
-/**
- * Screenshot capture request for admin
- */
-export interface CaptureScreenshotRequest {
-  brand_id: string;
-  page_type_slug: PageTypeSlug;
-  page_url: string;
-  capture_desktop?: boolean;
-  capture_mobile?: boolean;
-}
-
