@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { config } from '@/lib/config/env';
 import { ExternalApiError, NotFoundError } from '@/lib/errors/app-error';
 import type {
@@ -32,7 +32,7 @@ export function getClient() {
  * Brand queries
  */
 export class BrandQueries {
-  constructor(private client: ReturnType<typeof createClientClient>) {}
+  constructor(private client: SupabaseClient) {}
 
   /**
    * List brands with filters
@@ -316,7 +316,7 @@ export class BrandQueries {
  * Page queries
  */
 export class PageQueries {
-  constructor(private client: ReturnType<typeof createClientClient>) {}
+  constructor(private client: SupabaseClient) {}
 
   /**
    * Get pages by brand ID

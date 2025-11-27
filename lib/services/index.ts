@@ -5,7 +5,7 @@
 import { ScreenshotService } from './screenshot.service';
 import { BrandService } from './brand.service';
 import { PageService } from './page.service';
-import { getURLBoxClient, getBrandQueries, getPageQueries } from '@/lib/clients';
+import { getURLBoxClient, getServerBrandQueries, getServerPageQueries } from '@/lib/clients';
 
 // Singleton instances
 let screenshotService: ScreenshotService | null = null;
@@ -24,20 +24,22 @@ export function getScreenshotService(): ScreenshotService {
 
 /**
  * Get or create Brand service instance
+ * Uses server-side queries (service role key) for API routes
  */
 export function getBrandService(): BrandService {
   if (!brandService) {
-    brandService = new BrandService(getBrandQueries());
+    brandService = new BrandService(getServerBrandQueries());
   }
   return brandService;
 }
 
 /**
  * Get or create Page service instance
+ * Uses server-side queries (service role key) for API routes
  */
 export function getPageService(): PageService {
   if (!pageService) {
-    pageService = new PageService(getPageQueries());
+    pageService = new PageService(getServerPageQueries());
   }
   return pageService;
 }

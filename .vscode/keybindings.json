@@ -1,0 +1,8 @@
+[
+  {
+    "key": "cmd+shift+d",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Start Dev Server (Restart)"
+  }
+]
+

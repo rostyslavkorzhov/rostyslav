@@ -31,6 +31,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
+    // Log the error for debugging
+    console.error('Error in GET /api/brands:', error);
     return handleError(error);
   }
 }

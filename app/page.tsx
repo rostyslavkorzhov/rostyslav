@@ -27,12 +27,34 @@ export default function Home() {
         if (filters.search) params.set('search', filters.search);
 
         const response = await fetch(`/api/brands?${params.toString()}`);
-        if (!response.ok) throw new Error('Failed to load brands');
+        
+        if (!response.ok) {
+          // Try to parse error response
+          let errorMessage = 'Failed to load brands';
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+            console.error('API Error:', {
+              status: response.status,
+              statusText: response.statusText,
+              error: errorData,
+            });
+          } catch {
+            // If JSON parsing fails, use status text
+            errorMessage = `${errorMessage}: ${response.statusText} (${response.status})`;
+            console.error('API Error:', {
+              status: response.status,
+              statusText: response.statusText,
+            });
+          }
+          throw new Error(errorMessage);
+        }
 
         const data: GetBrandsResponse = await response.json();
         setBrands(data.data);
       } catch (error) {
         console.error('Failed to load brands:', error);
+        // You could set an error state here to display to the user
       } finally {
         setLoading(false);
       }

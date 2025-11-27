@@ -10,6 +10,8 @@ import { getServerClient } from './supabase-server';
 let urlboxClient: URLBoxClient | null = null;
 let brandQueries: BrandQueries | null = null;
 let pageQueries: PageQueries | null = null;
+let serverBrandQueries: BrandQueries | null = null;
+let serverPageQueries: PageQueries | null = null;
 
 /**
  * Get or create URLBox client instance
@@ -22,7 +24,7 @@ export function getURLBoxClient(): URLBoxClient {
 }
 
 /**
- * Get or create Brand queries instance
+ * Get or create Brand queries instance (client-side)
  */
 export function getBrandQueries(): BrandQueries {
   if (!brandQueries) {
@@ -33,7 +35,7 @@ export function getBrandQueries(): BrandQueries {
 }
 
 /**
- * Get or create Page queries instance
+ * Get or create Page queries instance (client-side)
  */
 export function getPageQueries(): PageQueries {
   if (!pageQueries) {
@@ -41,6 +43,30 @@ export function getPageQueries(): PageQueries {
     pageQueries = new PageQueries(client);
   }
   return pageQueries;
+}
+
+/**
+ * Get or create Brand queries instance (server-side)
+ * Uses service role key to bypass RLS
+ */
+export function getServerBrandQueries(): BrandQueries {
+  if (!serverBrandQueries) {
+    const client = getServerClient();
+    serverBrandQueries = new BrandQueries(client);
+  }
+  return serverBrandQueries;
+}
+
+/**
+ * Get or create Page queries instance (server-side)
+ * Uses service role key to bypass RLS
+ */
+export function getServerPageQueries(): PageQueries {
+  if (!serverPageQueries) {
+    const client = getServerClient();
+    serverPageQueries = new PageQueries(client);
+  }
+  return serverPageQueries;
 }
 
 /**
