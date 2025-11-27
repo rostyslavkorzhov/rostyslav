@@ -13,7 +13,7 @@ import {
 } from '@remixicon/react';
 
 import { AuthService } from '@/lib/services/auth.service';
-import { loginSchema } from '@/lib/validations';
+import { loginSchema, extractFieldErrors } from '@/lib/validations';
 import * as Checkbox from '@/components/ui/checkbox';
 import * as Divider from '@/components/ui/divider';
 import * as FancyButton from '@/components/ui/fancy-button';
@@ -78,13 +78,9 @@ function LoginForm() {
     });
 
     if (!validationResult.success) {
-      const errors: { email?: string; password?: string } = {};
-      validationResult.error.errors.forEach((err) => {
-        const field = err.path[0] as keyof typeof errors;
-        if (field) {
-          errors[field] = err.message;
-        }
-      });
+      const errors = extractFieldErrors<{ email: string; password: string }>(
+        validationResult.error
+      );
       setValidationErrors(errors);
       setLoading(false);
       return;

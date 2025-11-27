@@ -14,7 +14,7 @@ import {
 } from '@remixicon/react';
 
 import { AuthService } from '@/lib/services/auth.service';
-import { signupSchema } from '@/lib/validations';
+import { signupSchema, extractFieldErrors } from '@/lib/validations';
 import * as Divider from '@/components/ui/divider';
 import * as FancyButton from '@/components/ui/fancy-button';
 import * as Input from '@/components/ui/input';
@@ -79,13 +79,11 @@ export default function SignupPage() {
     });
 
     if (!validationResult.success) {
-      const errors: { email?: string; password?: string; fullName?: string } = {};
-      validationResult.error.errors.forEach((err) => {
-        const field = err.path[0] as keyof typeof errors;
-        if (field) {
-          errors[field] = err.message;
-        }
-      });
+      const errors = extractFieldErrors<{
+        email: string;
+        password: string;
+        fullName: string;
+      }>(validationResult.error);
       setValidationErrors(errors);
       setLoading(false);
       return;
