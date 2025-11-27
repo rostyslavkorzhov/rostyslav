@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components/ui/select';
+import * as Select from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { BRAND_CATEGORIES, COUNTRIES } from '@/types/brand';
 
@@ -33,39 +33,60 @@ export function FilterBar({
         className='flex-1 min-w-[200px]'
       />
 
-      <Select
-        value={category || ''}
-        onChange={(e) => onFilterChange({ category: e.target.value || undefined })}
+      <Select.Root
+        value={category || undefined}
+        onValueChange={(value) => {
+          onFilterChange({ category: value === '__all__' ? undefined : value });
+        }}
       >
-        <option value=''>All Categories</option>
-        {BRAND_CATEGORIES.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </Select>
+        <Select.Trigger>
+          <Select.Value placeholder='All Categories' />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value='__all__'>All Categories</Select.Item>
+          {BRAND_CATEGORIES.map((cat) => (
+            <Select.Item key={cat} value={cat}>
+              {cat}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
 
-      <Select
-        value={country || ''}
-        onChange={(e) => onFilterChange({ country: e.target.value || undefined })}
+      <Select.Root
+        value={country || undefined}
+        onValueChange={(value) => {
+          onFilterChange({ country: value === '__all__' ? undefined : value });
+        }}
       >
-        <option value=''>All Countries</option>
-        {COUNTRIES.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </Select>
+        <Select.Trigger>
+          <Select.Value placeholder='All Countries' />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value='__all__'>All Countries</Select.Item>
+          {COUNTRIES.map((c) => (
+            <Select.Item key={c} value={c}>
+              {c}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
 
-      <Select
-        value={pageType || ''}
-        onChange={(e) => onFilterChange({ pageType: e.target.value || undefined })}
+      <Select.Root
+        value={pageType || undefined}
+        onValueChange={(value) => {
+          onFilterChange({ pageType: value === '__all__' ? undefined : value });
+        }}
       >
-        <option value=''>All Page Types</option>
-        <option value='home'>Home</option>
-        <option value='pdp'>Product Detail</option>
-        <option value='about'>About</option>
-      </Select>
+        <Select.Trigger>
+          <Select.Value placeholder='All Page Types' />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value='__all__'>All Page Types</Select.Item>
+          <Select.Item value='home'>Home</Select.Item>
+          <Select.Item value='pdp'>Product Detail</Select.Item>
+          <Select.Item value='about'>About</Select.Item>
+        </Select.Content>
+      </Select.Root>
     </div>
   );
 }

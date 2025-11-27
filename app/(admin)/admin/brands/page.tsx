@@ -59,7 +59,7 @@ export default function BrandsPage() {
                   <p className='text-text-sub-600'>{brand.category}</p>
                 </div>
                 <Link href={`/admin/brands/${brand.id}`}>
-                  <Button variant='outline'>Edit</Button>
+                  <Button variant='neutral' mode='stroke'>Edit</Button>
                 </Link>
               </div>
             </div>

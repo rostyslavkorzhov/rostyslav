@@ -86,7 +86,6 @@ function FileFormatIcon({
       />
       <foreignObject x='0' y='0' width='40' height='40'>
         <div
-          xmlns='http://www.w3.org/1999/xhtml'
           className={formatBox()}
           suppressHydrationWarning
         >

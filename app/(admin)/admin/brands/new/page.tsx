@@ -141,7 +141,8 @@ export default function NewBrandPage() {
           </Button>
           <Button
             type='button'
-            variant='outline'
+            variant='neutral'
+            mode='stroke'
             onClick={() => router.back()}
           >
             Cancel

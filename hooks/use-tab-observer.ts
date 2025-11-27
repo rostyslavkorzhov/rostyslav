@@ -8,7 +8,7 @@ interface UseTabObserverOptions {
 
 export function useTabObserver({ onActiveTabChange }: UseTabObserverOptions = {}) {
   const [mounted, setMounted] = React.useState(false);
-  const listRef = React.useRef<HTMLElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
   const prevActiveTabRef = React.useRef<HTMLElement | null>(null);
   const onActiveTabChangeRef = React.useRef(onActiveTabChange);
 

@@ -31,7 +31,7 @@ export function recursiveCloneChildren(
         ? additionalProps
         : {};
 
-      const childProps = (child as React.ReactElement).props;
+      const childProps = (child as React.ReactElement).props as { children?: React.ReactNode; asChild?: boolean };
 
       return React.cloneElement(
         child,
