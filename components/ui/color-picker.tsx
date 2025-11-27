@@ -139,8 +139,6 @@ const EyeDropperButton = React.forwardRef<
 >(({ ...rest }, forwardedRef) => {
   const state = React.useContext(ColorPickerStateContext)!;
 
-  // eslint-disable-next-line
-  // @ts-ignore
   if (typeof EyeDropper === 'undefined') {
     return null;
   }
@@ -150,13 +148,9 @@ const EyeDropperButton = React.forwardRef<
       ref={forwardedRef}
       aria-label='Eye dropper'
       onClick={() => {
-        // eslint-disable-next-line
-        // @ts-ignore
         new EyeDropper()
           .open()
-          .then((result: { sRGBHex: string }) =>
-            state.setColor(parseColor(result.sRGBHex)),
-          );
+          .then((result) => state.setColor(parseColor(result.sRGBHex)));
       }}
       {...rest}
     />

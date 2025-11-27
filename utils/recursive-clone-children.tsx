@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 
 /**
@@ -14,7 +13,7 @@ import * as React from 'react';
  */
 export function recursiveCloneChildren(
   children: React.ReactNode,
-  additionalProps: any,
+  additionalProps: Record<string, unknown>,
   displayNames: string[],
   uniqueId: string,
   asChild?: boolean,
@@ -32,7 +31,7 @@ export function recursiveCloneChildren(
         ? additionalProps
         : {};
 
-      const childProps = (child as React.ReactElement<any>).props;
+      const childProps = (child as React.ReactElement).props;
 
       return React.cloneElement(
         child,

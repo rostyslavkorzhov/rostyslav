@@ -306,3 +306,5 @@ function ButtonIcon<T extends React.ElementType>({
 ButtonIcon.displayName = BUTTON_ICON_NAME;
 
 export { ButtonRoot as Root, ButtonIcon as Icon };
+// Default export for backward compatibility
+export const Button = ButtonRoot;

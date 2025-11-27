@@ -12,19 +12,26 @@ This document lists all environment variables required for this application.
   - `/api/screenshot` (POST)
   - `/api/screenshot/status` (GET)
 
-### OPENAI_API_KEY
-- **Description**: API key for OpenAI GPT-4o model
-- **Required for**: Screenshot analysis (preferred option)
-- **Where to get it**: Sign up at [platform.openai.com](https://platform.openai.com) and create an API key
-- **Used in**: `/api/screenshot/analyze` (POST)
-- **Note**: If not provided, the app will fall back to Anthropic
+### NEXT_PUBLIC_SUPABASE_URL
+- **Description**: URL for your Supabase project
+- **Required for**: Database operations and authentication
+- **Where to get it**: Available in your Supabase project settings at [supabase.com](https://supabase.com/dashboard/project/_/settings/api)
+- **Note**: Must be prefixed with `NEXT_PUBLIC_` to be accessible in the browser
+- **Used in**: All database-related operations
 
-### ANTHROPIC_API_KEY
-- **Description**: API key for Anthropic Claude 3.5 Sonnet model
-- **Required for**: Screenshot analysis (fallback option)
-- **Where to get it**: Sign up at [console.anthropic.com](https://console.anthropic.com) and create an API key
-- **Used in**: `/api/screenshot/analyze` (POST)
-- **Note**: Only used if `OPENAI_API_KEY` is not available
+### NEXT_PUBLIC_SUPABASE_ANON_KEY
+- **Description**: Anonymous/public API key for Supabase
+- **Required for**: Client-side database access (with RLS)
+- **Where to get it**: Available in your Supabase project settings at [supabase.com](https://supabase.com/dashboard/project/_/settings/api)
+- **Note**: Must be prefixed with `NEXT_PUBLIC_` to be accessible in the browser
+- **Used in**: All database-related operations
+
+### SUPABASE_SERVICE_ROLE_KEY
+- **Description**: Service role key for Supabase (server-side only)
+- **Required for**: Admin operations that bypass RLS (Row Level Security)
+- **Where to get it**: Available in your Supabase project settings at [supabase.com](https://supabase.com/dashboard/project/_/settings/api)
+- **Security**: ⚠️ **NEVER expose this key in client-side code**. This key bypasses RLS and should only be used in API routes and server components.
+- **Used in**: Admin API routes, screenshot uploads, server-side operations
 
 ---
 
@@ -35,9 +42,13 @@ This document lists all environment variables required for this application.
 Create a `.env.local` file in the project root:
 
 ```env
-URLBOX_API_SECRET=your_urlbox_secret_here
-OPENAI_API_KEY=your_openai_key_here
-ANTHROPIC_API_KEY=your_anthropic_key_here
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# URLBox Configuration
+URLBOX_API_SECRET=your_urlbox_api_secret
 ```
 
 **Important**: 
@@ -96,8 +107,7 @@ Currently, all environment variables are required. Future optional variables may
 - Verify the key is valid and active
 - Check API usage limits/quota
 - Ensure the key has the correct permissions
-- For OpenAI: Verify you have access to GPT-4o model
-- For Anthropic: Verify you have access to Claude 3.5 Sonnet model
+- For Supabase: Verify your project is active and the URL is correct
 
 ### Different Behavior Between Environments
 

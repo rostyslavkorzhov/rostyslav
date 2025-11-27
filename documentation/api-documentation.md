@@ -119,73 +119,6 @@ GET /api/screenshot/status?statusUrl=https://api.urlbox.com/v1/render/status/abc
 
 ---
 
-### 3. Screenshot Analysis
-
-**Endpoint**: `POST /api/screenshot/analyze`
-
-**Description**: Analyzes a screenshot image using AI (OpenAI or Anthropic) to identify conversion-optimized elements.
-
-**Request Body**:
-```json
-{
-  "imageData": "data:image/png;base64,iVBORw0KGgoAAAANS..."
-}
-```
-
-**Request Parameters**:
-- `imageData` (string, required): Base64-encoded image data (with or without data URL prefix)
-
-**Response** (Success - 200):
-```json
-{
-  "success": true,
-  "highlights": [
-    {
-      "id": "highlight-1",
-      "bounds": {
-        "x": 0.1,
-        "y": 0.2,
-        "width": 0.3,
-        "height": 0.1
-      },
-      "explanation": "This prominent CTA button uses contrasting colors and clear copy to draw attention and encourage immediate action.",
-      "category": "cta",
-      "analyzedAt": 1234567890
-    }
-  ]
-}
-```
-
-**Response** (Error - 400/500):
-```json
-{
-  "error": "Error message",
-  "details": "Additional error details"
-}
-```
-
-**Environment Variables Required** (at least one):
-- `OPENAI_API_KEY`: API key for OpenAI (preferred)
-- `ANTHROPIC_API_KEY`: API key for Anthropic (fallback)
-
-**Highlight Categories**:
-- `cta`: Call-to-action buttons
-- `hero`: Hero sections with value propositions
-- `trust_signal`: Badges, certifications, testimonials
-- `social_proof`: Reviews, customer counts, logos
-- `form`: Forms or sign-up elements
-- `navigation`: Navigation elements that guide users to conversion
-- `other`: Other conversion-optimized elements
-
-**Notes**:
-- Uses OpenAI GPT-4o model if `OPENAI_API_KEY` is available
-- Falls back to Anthropic Claude 3.5 Sonnet if only `ANTHROPIC_API_KEY` is available
-- Returns 3-8 highlights focusing on most impactful conversion elements
-- Coordinates are normalized (0-1 range) relative to image dimensions
-- Validates and normalizes all highlight data before returning
-
----
-
 ## Error Handling
 
 All endpoints follow consistent error response format:
@@ -227,15 +160,8 @@ Currently, no rate limiting is implemented. Consider adding rate limiting for pr
 - **Documentation**: https://urlbox.io/docs
 - **Required**: `URLBOX_API_SECRET` environment variable
 
-### OpenAI
-- **Service**: AI image analysis (preferred)
-- **Model**: GPT-4o
-- **Documentation**: https://platform.openai.com/docs
-- **Required**: `OPENAI_API_KEY` environment variable
-
-### Anthropic
-- **Service**: AI image analysis (fallback)
-- **Model**: Claude 3.5 Sonnet
-- **Documentation**: https://docs.anthropic.com
-- **Required**: `ANTHROPIC_API_KEY` environment variable
+### Supabase
+- **Service**: Database and authentication
+- **Documentation**: https://supabase.com/docs
+- **Required**: `SUPABASE_URL` and `SUPABASE_ANON_KEY` environment variables
 

@@ -85,9 +85,11 @@ function FileFormatIcon({
         strokeWidth='1.5'
       />
       <foreignObject x='0' y='0' width='40' height='40'>
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/* @ts-ignore */}
-        <div xmlns='http://www.w3.org/1999/xhtml' className={formatBox()}>
+        <div
+          xmlns='http://www.w3.org/1999/xhtml'
+          className={formatBox()}
+          suppressHydrationWarning
+        >
           {format}
         </div>
       </foreignObject>

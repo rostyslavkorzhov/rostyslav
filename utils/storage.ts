@@ -1,20 +1,5 @@
 export type ScreenshotStatus = 'completed' | 'in_progress' | 'failed';
 
-export interface HighlightBounds {
-  x: number; // normalized 0-1
-  y: number; // normalized 0-1
-  width: number; // normalized 0-1
-  height: number; // normalized 0-1
-}
-
-export interface ScreenshotHighlight {
-  id: string;
-  bounds: HighlightBounds;
-  explanation: string;
-  category?: 'cta' | 'hero' | 'trust_signal' | 'social_proof' | 'form' | 'navigation' | 'other';
-  analyzedAt: number;
-}
-
 export interface ScreenshotData {
   id: string;
   url: string;
@@ -25,7 +10,6 @@ export interface ScreenshotData {
   imageData?: string; // base64 data URL (optional for in_progress)
   renderId?: string; // URLBOX render ID for async tracking
   statusUrl?: string; // URLBOX status URL for polling
-  highlights?: ScreenshotHighlight[]; // AI-generated conversion insights
 }
 
 const STORAGE_KEY = 'urlbox_screenshots';
@@ -104,8 +88,7 @@ export function updateScreenshotStatus(
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(screenshots));
     return true;
-  } catch (error) {
-    console.error('Error updating screenshot status:', error);
+  } catch {
     return false;
   }
 }
@@ -126,8 +109,7 @@ export function getAllScreenshots(): ScreenshotData[] {
     const screenshots = JSON.parse(stored) as ScreenshotData[];
     // Sort by timestamp (newest first)
     return screenshots.sort((a, b) => b.timestamp - a.timestamp);
-  } catch (error) {
-    console.error('Error reading screenshots from localStorage:', error);
+  } catch {
     return [];
   }
 }
@@ -161,8 +143,7 @@ export function deleteScreenshot(id: string): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
     return true;
-  } catch (error) {
-    console.error('Error deleting screenshot from localStorage:', error);
+  } catch {
     return false;
   }
 }
@@ -173,52 +154,8 @@ export function deleteScreenshot(id: string): boolean {
 export function clearAllScreenshots(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.error('Error clearing screenshots from localStorage:', error);
+  } catch {
+    // Silently fail if localStorage is unavailable
   }
-}
-
-/**
- * Update highlights for a screenshot
- */
-export function updateScreenshotHighlights(
-  id: string,
-  highlights: ScreenshotHighlight[]
-): boolean {
-  const screenshots = getAllScreenshots();
-  const index = screenshots.findIndex((s) => s.id === id);
-  
-  if (index === -1) {
-    return false; // Screenshot not found
-  }
-
-  screenshots[index] = {
-    ...screenshots[index],
-    highlights,
-  };
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(screenshots));
-    return true;
-  } catch (error) {
-    console.error('Error updating screenshot highlights:', error);
-    return false;
-  }
-}
-
-/**
- * Check if a screenshot has highlights
- */
-export function hasHighlights(id: string): boolean {
-  const screenshot = getScreenshot(id);
-  return screenshot?.highlights !== undefined && screenshot.highlights.length > 0;
-}
-
-/**
- * Get highlights for a specific screenshot
- */
-export function getScreenshotHighlights(id: string): ScreenshotHighlight[] | null {
-  const screenshot = getScreenshot(id);
-  return screenshot?.highlights || null;
 }
 

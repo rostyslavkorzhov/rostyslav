@@ -439,3 +439,5 @@ export {
   TriggerIcon,
   SelectValue as Value,
 };
+// Default export for backward compatibility
+export const Select = SelectRoot;

@@ -2,10 +2,13 @@
  * Service layer types
  */
 
-import type { ScreenshotCaptureRequest, ScreenshotStatusRequest, AIAnalysisRequest } from './api';
+import type { ScreenshotCaptureRequest, ScreenshotStatusRequest } from './api';
 
 // Re-export API types for convenience
-export type { ScreenshotCaptureRequest, ScreenshotStatusRequest, AIAnalysisRequest } from './api';
+export type { ScreenshotCaptureRequest, ScreenshotStatusRequest } from './api';
+
+// Re-export ScreenshotCaptureRequest from api.ts (it's defined there)
+export type { ScreenshotCaptureRequest as IScreenshotCaptureRequest } from './api';
 
 /**
  * Screenshot metadata
@@ -35,22 +38,12 @@ export interface URLBoxStatusResponse {
 
 /**
  * Screenshot service interface
+ * Note: The actual implementation uses different signatures:
+ * - capture(url: string, device: 'desktop' | 'mobile'): Promise<URLBoxRenderResponse>
+ * - checkStatus(statusUrl: string): Promise<URLBoxStatusResponse & { imageData?: string }>
  */
 export interface IScreenshotService {
-  capture(request: ScreenshotCaptureRequest): Promise<URLBoxRenderResponse>;
-  checkStatus(request: ScreenshotStatusRequest): Promise<URLBoxStatusResponse & { imageData?: string }>;
-}
-
-/**
- * AI analysis service interface
- */
-export interface IAIAnalysisService {
-  analyzeScreenshot(request: AIAnalysisRequest): Promise<{ highlights: Array<{
-    id: string;
-    bounds: { x: number; y: number; width: number; height: number };
-    explanation: string;
-    category: string;
-    analyzedAt: number;
-  }> }>;
+  capture(url: string, device?: 'desktop' | 'mobile'): Promise<URLBoxRenderResponse>;
+  checkStatus(statusUrl: string): Promise<URLBoxStatusResponse & { imageData?: string }>;
 }
 

@@ -3,13 +3,13 @@
  * Provides singleton instances of all API clients
  */
 import { URLBoxClient } from './urlbox.client';
-import { OpenAIClient } from './openai.client';
-import { AnthropicClient } from './anthropic.client';
+import { createClientClient, BrandQueries, PageQueries } from './supabase.client';
+import { getServerClient } from './supabase-server';
 
 // Singleton instances
 let urlboxClient: URLBoxClient | null = null;
-let openaiClient: OpenAIClient | null = null;
-let anthropicClient: AnthropicClient | null = null;
+let brandQueries: BrandQueries | null = null;
+let pageQueries: PageQueries | null = null;
 
 /**
  * Get or create URLBox client instance
@@ -22,29 +22,31 @@ export function getURLBoxClient(): URLBoxClient {
 }
 
 /**
- * Get or create OpenAI client instance
+ * Get or create Brand queries instance
  */
-export function getOpenAIClient(): OpenAIClient {
-  if (!openaiClient) {
-    openaiClient = new OpenAIClient();
+export function getBrandQueries(): BrandQueries {
+  if (!brandQueries) {
+    const client = createClientClient();
+    brandQueries = new BrandQueries(client);
   }
-  return openaiClient;
+  return brandQueries;
 }
 
 /**
- * Get or create Anthropic client instance
+ * Get or create Page queries instance
  */
-export function getAnthropicClient(): AnthropicClient {
-  if (!anthropicClient) {
-    anthropicClient = new AnthropicClient();
+export function getPageQueries(): PageQueries {
+  if (!pageQueries) {
+    const client = createClientClient();
+    pageQueries = new PageQueries(client);
   }
-  return anthropicClient;
+  return pageQueries;
 }
 
 /**
- * Export client classes for direct instantiation if needed
+ * Export client classes and functions for direct use if needed
  */
 export { URLBoxClient } from './urlbox.client';
-export { OpenAIClient } from './openai.client';
-export { AnthropicClient } from './anthropic.client';
+export { createClientClient, getClient, BrandQueries, PageQueries } from './supabase.client';
+export { getServerClient, createServerClient } from './supabase-server';
 

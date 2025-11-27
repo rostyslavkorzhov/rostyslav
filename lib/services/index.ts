@@ -3,12 +3,14 @@
  * Provides singleton instances of all services
  */
 import { ScreenshotService } from './screenshot.service';
-import { AIAnalysisService } from './ai-analysis.service';
-import { getURLBoxClient, getOpenAIClient, getAnthropicClient } from '@/lib/clients';
+import { BrandService } from './brand.service';
+import { PageService } from './page.service';
+import { getURLBoxClient, getBrandQueries, getPageQueries } from '@/lib/clients';
 
 // Singleton instances
 let screenshotService: ScreenshotService | null = null;
-let aiAnalysisService: AIAnalysisService | null = null;
+let brandService: BrandService | null = null;
+let pageService: PageService | null = null;
 
 /**
  * Get or create Screenshot service instance
@@ -21,21 +23,30 @@ export function getScreenshotService(): ScreenshotService {
 }
 
 /**
- * Get or create AI Analysis service instance
+ * Get or create Brand service instance
  */
-export function getAIAnalysisService(): AIAnalysisService {
-  if (!aiAnalysisService) {
-    aiAnalysisService = new AIAnalysisService(
-      getOpenAIClient(),
-      getAnthropicClient()
-    );
+export function getBrandService(): BrandService {
+  if (!brandService) {
+    brandService = new BrandService(getBrandQueries());
   }
-  return aiAnalysisService;
+  return brandService;
+}
+
+/**
+ * Get or create Page service instance
+ */
+export function getPageService(): PageService {
+  if (!pageService) {
+    pageService = new PageService(getPageQueries());
+  }
+  return pageService;
 }
 
 /**
  * Export service classes for direct instantiation if needed
  */
 export { ScreenshotService } from './screenshot.service';
-export { AIAnalysisService } from './ai-analysis.service';
+export { BrandService } from './brand.service';
+export { PageService } from './page.service';
+export { AuthService } from './auth.service';
 

@@ -28,9 +28,7 @@ export async function GET(request: NextRequest) {
     const screenshotService = getScreenshotService();
 
     // Check status
-    const result = await screenshotService.checkStatus({
-      statusUrl: validatedData.statusUrl,
-    });
+    const result = await screenshotService.checkStatus(validatedData.statusUrl);
 
     // If status is not "succeeded" or "done", return status without image
     if (result.status !== 'succeeded' && result.status !== 'done') {

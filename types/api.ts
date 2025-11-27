@@ -2,26 +2,73 @@
  * API request and response types
  */
 
+import type { Brand, BrandWithPages, Page } from './database';
+import type { BrandFilters, CreateBrandInput, UpdateBrandInput } from './brand';
+import type { CreatePageInput, CaptureScreenshotRequest } from './page';
+
 /**
- * Screenshot capture request
+ * Public API: Get brands response
  */
-export interface ScreenshotCaptureRequest {
-  url: string;
-  brandName: string;
-  pageType: string;
+export interface GetBrandsResponse {
+  data: BrandWithPages[];
+  count: number;
+  hasMore: boolean;
 }
 
 /**
- * Screenshot capture response
+ * Public API: Get brand by slug response
+ */
+export interface GetBrandResponse {
+  data: BrandWithPages;
+}
+
+/**
+ * Public API: Get page by id response
+ */
+export interface GetPageResponse {
+  data: Page & { brand: Brand };
+}
+
+/**
+ * Admin API: Create brand request
+ */
+export interface CreateBrandRequest extends CreateBrandInput {}
+
+/**
+ * Admin API: Update brand request
+ */
+export interface UpdateBrandRequest extends UpdateBrandInput {}
+
+/**
+ * Admin API: Create brand response
+ */
+export interface CreateBrandResponse {
+  data: Brand;
+}
+
+/**
+ * Admin API: Update brand response
+ */
+export interface UpdateBrandResponse {
+  data: Brand;
+}
+
+/**
+ * Admin API: Capture screenshot request
+ */
+export interface CaptureScreenshotAPIRequest extends CaptureScreenshotRequest {}
+
+/**
+ * Admin API: Screenshot capture response
  */
 export interface ScreenshotCaptureResponse {
   success: true;
   renderId: string;
   statusUrl: string;
   metadata: {
-    url: string;
-    brandName: string;
-    pageType: string;
+    brand_id: string;
+    page_type: string;
+    page_url: string;
   };
 }
 
@@ -43,50 +90,20 @@ export interface ScreenshotStatusResponse {
 }
 
 /**
- * AI analysis request
+ * Screenshot capture request (public API format)
+ * Note: This is different from CaptureScreenshotRequest which is for admin API
  */
-export interface AIAnalysisRequest {
-  imageData: string;
+export interface ScreenshotCaptureRequest {
+  url: string;
+  brandName: string;
+  pageType: string;
 }
 
 /**
- * Highlight bounds (normalized 0-1)
+ * API error response
  */
-export interface HighlightBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-/**
- * Highlight category
- */
-export type HighlightCategory =
-  | 'cta'
-  | 'hero'
-  | 'trust_signal'
-  | 'social_proof'
-  | 'form'
-  | 'navigation'
-  | 'other';
-
-/**
- * Highlight response
- */
-export interface Highlight {
-  id: string;
-  bounds: HighlightBounds;
-  explanation: string;
-  category: HighlightCategory;
-  analyzedAt?: number;
-}
-
-/**
- * AI analysis response
- */
-export interface AIAnalysisResponse {
-  success: true;
-  highlights: Highlight[];
+export interface APIErrorResponse {
+  error: string;
+  details?: string | unknown;
 }
 

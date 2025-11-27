@@ -6,3 +6,14 @@ declare module 'react' {
     [key: `--${string}`]: string | number;
   }
 }
+
+// EyeDropper API type declaration (not available in all TypeScript versions)
+interface EyeDropper {
+  open(): Promise<{ sRGBHex: string }>;
+}
+
+declare global {
+  const EyeDropper: {
+    new (): EyeDropper;
+  } | undefined;
+}

@@ -3,4 +3,7 @@
  */
 export * from './api';
 export * from './services';
+export * from './database';
+export * from './brand';
+export * from './page';
 

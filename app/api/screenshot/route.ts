@@ -22,12 +22,8 @@ export async function POST(request: NextRequest) {
     // Get service instance
     const screenshotService = getScreenshotService();
 
-    // Capture screenshot
-    const result = await screenshotService.capture({
-      url: validatedData.url,
-      brandName: validatedData.brandName,
-      pageType: validatedData.pageType,
-    });
+    // Capture screenshot (desktop by default)
+    const result = await screenshotService.capture(validatedData.url, 'desktop');
 
     // Return success response (maintain backward compatibility with client)
     return NextResponse.json({

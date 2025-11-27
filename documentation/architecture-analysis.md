@@ -20,7 +20,7 @@ Your current Next.js application has a **functional but not scalable** architect
 ### ⚠️ Current Issues
 
 1. **Business logic in API routes** - All logic is directly in route handlers
-2. **No service layer** - External API calls (URLBox, OpenAI, Anthropic) are embedded in routes
+2. **No service layer** - External API calls (URLBox) are embedded in routes
 3. **No database abstraction** - Will need this for Supabase
 4. **No authentication layer** - No middleware or utilities for auth
 5. **No payment service** - Will need abstraction for Stripe
@@ -62,8 +62,6 @@ rostyslav/
 │   │
 │   ├── clients/                  # External API clients
 │   │   ├── urlbox.client.ts      # URLBox API wrapper
-│   │   ├── openai.client.ts     # OpenAI API wrapper
-│   │   ├── anthropic.client.ts   # Anthropic API wrapper
 │   │   ├── stripe.client.ts      # Stripe SDK wrapper
 │   │   └── supabase.client.ts    # Supabase client
 │   │
@@ -116,7 +114,7 @@ rostyslav/
 
 - **API Routes** → Thin controllers that validate, call services, return responses
 - **Services** → Business logic and orchestration
-- **Clients** → External API integrations (URLBox, OpenAI, Stripe, etc.)
+- **Clients** → External API integrations (URLBox, Stripe, etc.)
 - **Database** → Data access layer (Supabase queries)
 
 ### 2. **Dependency Injection**
@@ -151,9 +149,6 @@ export const config = {
   urlbox: {
     apiSecret: process.env.URLBOX_API_SECRET!,
     baseUrl: 'https://api.urlbox.com/v1',
-  },
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY,
   },
   // ... etc
 } as const;
@@ -199,11 +194,8 @@ type Screenshot = Database['public']['tables']['screenshots']['Row'];
 
 ### Phase 2: Extract Services (Critical)
 1. ✅ Create `lib/clients/urlbox.client.ts` - Extract URLBox logic
-2. ✅ Create `lib/clients/openai.client.ts` - Extract OpenAI logic
-3. ✅ Create `lib/clients/anthropic.client.ts` - Extract Anthropic logic
-4. ✅ Create `lib/services/screenshot.service.ts` - Business logic
-5. ✅ Create `lib/services/ai-analysis.service.ts` - AI analysis logic
-6. ✅ Refactor API routes to use services
+2. ✅ Create `lib/services/screenshot.service.ts` - Business logic
+3. ✅ Refactor API routes to use services
 
 ### Phase 3: Database Layer (Before Supabase)
 1. ✅ Set up Supabase client in `lib/db/supabase.ts`

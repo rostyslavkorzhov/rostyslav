@@ -70,3 +70,5 @@ function LabelSub({
 }
 
 export { LabelRoot as Root, LabelAsterisk as Asterisk, LabelSub as Sub };
+// Default export for backward compatibility
+export const Label = LabelRoot;

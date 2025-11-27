@@ -70,8 +70,8 @@
    **Required Variables:**
    ```
    URLBOX_API_SECRET
-   OPENAI_API_KEY
-   ANTHROPIC_API_KEY
+   SUPABASE_URL
+   SUPABASE_ANON_KEY
    ```
 
    **For each variable:**
@@ -85,8 +85,8 @@
    - Create `.env.local` in project root:
    ```
    URLBOX_API_SECRET=your_secret_here
-   OPENAI_API_KEY=your_key_here
-   ANTHROPIC_API_KEY=your_key_here
+   SUPABASE_URL=your_supabase_url_here
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
    ```
    - Add `.env.local` to `.gitignore` (should already be there)
 
@@ -184,8 +184,8 @@ git push origin main
 - [ ] Production branch set to `main`
 - [ ] Environment variables configured:
   - [ ] `URLBOX_API_SECRET`
-  - [ ] `OPENAI_API_KEY`
-  - [ ] `ANTHROPIC_API_KEY`
+  - [ ] `SUPABASE_URL`
+  - [ ] `SUPABASE_ANON_KEY`
 - [ ] Variables assigned to correct environments
 
 ### Domain Setup
