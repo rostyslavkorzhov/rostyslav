@@ -8,20 +8,19 @@
 
 [Join the AlignUI Community](https://discord.gg/alignui)
 
-# Rostyslav
+# Best of E-commerce
 
-Built with AlignUI Starter Template and Next.js
+A curated gallery showcasing the best e-commerce brands and their design patterns.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Built with Next.js, Supabase, and AlignUI design system.
 
 ## Features
 
-- 🔸 Includes all styles
-- 🔸 Ready-to-use Tailwind setup
-- 🔸 All base components included
-- 🔸 All utils included
-- 🔸 Inter font setup
-- 🔸 Dark mode toggle included
+- 🔸 Brand gallery with filtering and search
+- 🔸 Screenshot capture and management
+- 🔸 Admin dashboard for content management
+- 🔸 Authentication and user management
+- 🔸 Responsive design with dark mode support
 
 ## Getting Started
 

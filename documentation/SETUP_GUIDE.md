@@ -11,7 +11,7 @@ This guide will walk you through setting up the Best of E-commerce application f
 ## Step 1: Clone and Install Dependencies
 
 ```bash
-cd alignui-nextjs-typescript-starter
+cd bestofecom
 pnpm install
 ```
 

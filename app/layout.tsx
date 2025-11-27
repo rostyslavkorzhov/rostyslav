@@ -20,8 +20,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'My App',
-  description: 'Built with AlignUI design system',
+  title: 'Best of E-commerce',
+  description: 'Discover the best e-commerce brands and their design patterns',
 };
 
 export default function RootLayout({
