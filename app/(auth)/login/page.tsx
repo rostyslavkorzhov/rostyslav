@@ -13,6 +13,7 @@ import {
 } from '@remixicon/react';
 
 import { AuthService } from '@/lib/services/auth.service';
+import { loginSchema } from '@/lib/validations';
 import * as Checkbox from '@/components/ui/checkbox';
 import * as Divider from '@/components/ui/divider';
 import * as FancyButton from '@/components/ui/fancy-button';
@@ -55,6 +56,10 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
   const [loading, setLoading] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
@@ -63,7 +68,27 @@ function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
     setLoading(true);
+
+    // Client-side validation
+    const validationResult = loginSchema.safeParse({
+      email,
+      password,
+    });
+
+    if (!validationResult.success) {
+      const errors: { email?: string; password?: string } = {};
+      validationResult.error.errors.forEach((err) => {
+        const field = err.path[0] as keyof typeof errors;
+        if (field) {
+          errors[field] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       await authService.signIn(email, password);
@@ -118,12 +143,20 @@ function LoginForm() {
                 type='email'
                 placeholder='hello@alignui.com'
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => ({ ...prev, email: undefined }));
+                  }
+                }}
                 required
                 disabled={loading}
               />
             </Input.Wrapper>
           </Input.Root>
+          {validationErrors.email && (
+            <p className='text-paragraph-xs text-red-600'>{validationErrors.email}</p>
+          )}
         </div>
 
         <div className='flex flex-col gap-1'>
@@ -133,10 +166,18 @@ function LoginForm() {
           <PasswordInput
             id='password'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (validationErrors.password) {
+                setValidationErrors((prev) => ({ ...prev, password: undefined }));
+              }
+            }}
             required
             disabled={loading}
           />
+          {validationErrors.password && (
+            <p className='text-paragraph-xs text-red-600'>{validationErrors.password}</p>
+          )}
         </div>
 
         {error && (

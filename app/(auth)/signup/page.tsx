@@ -14,6 +14,7 @@ import {
 } from '@remixicon/react';
 
 import { AuthService } from '@/lib/services/auth.service';
+import { signupSchema } from '@/lib/validations';
 import * as Divider from '@/components/ui/divider';
 import * as FancyButton from '@/components/ui/fancy-button';
 import * as Input from '@/components/ui/input';
@@ -55,6 +56,11 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{
+    email?: string;
+    password?: string;
+    fullName?: string;
+  }>({});
   const [loading, setLoading] = useState(false);
 
   const authService = new AuthService();
@@ -62,7 +68,28 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setValidationErrors({});
     setLoading(true);
+
+    // Client-side validation
+    const validationResult = signupSchema.safeParse({
+      email,
+      password,
+      fullName: fullName || undefined,
+    });
+
+    if (!validationResult.success) {
+      const errors: { email?: string; password?: string; fullName?: string } = {};
+      validationResult.error.errors.forEach((err) => {
+        const field = err.path[0] as keyof typeof errors;
+        if (field) {
+          errors[field] = err.message;
+        }
+      });
+      setValidationErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       await authService.signUp(email, password, fullName);
@@ -116,12 +143,20 @@ export default function SignupPage() {
                 type='text'
                 placeholder='James Brown'
                 value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                onChange={(e) => {
+                  setFullName(e.target.value);
+                  if (validationErrors.fullName) {
+                    setValidationErrors((prev) => ({ ...prev, fullName: undefined }));
+                  }
+                }}
                 required
                 disabled={loading}
               />
             </Input.Wrapper>
           </Input.Root>
+          {validationErrors.fullName && (
+            <p className='text-paragraph-xs text-red-600'>{validationErrors.fullName}</p>
+          )}
         </div>
 
         <div className='flex flex-col gap-1'>
@@ -136,12 +171,20 @@ export default function SignupPage() {
                 type='email'
                 placeholder='hello@alignui.com'
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (validationErrors.email) {
+                    setValidationErrors((prev) => ({ ...prev, email: undefined }));
+                  }
+                }}
                 required
                 disabled={loading}
               />
             </Input.Wrapper>
           </Input.Root>
+          {validationErrors.email && (
+            <p className='text-paragraph-xs text-red-600'>{validationErrors.email}</p>
+          )}
         </div>
 
         <div className='flex flex-col gap-1'>
@@ -151,15 +194,24 @@ export default function SignupPage() {
           <PasswordInput
             id='password'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (validationErrors.password) {
+                setValidationErrors((prev) => ({ ...prev, password: undefined }));
+              }
+            }}
             required
             minLength={8}
             disabled={loading}
           />
-          <div className='flex gap-1 text-paragraph-xs text-text-sub-600'>
-            <RiInformationFill className='size-4 shrink-0 text-text-soft-400' />
-            Must contain 1 uppercase letter, 1 number, min. 8 characters.
-          </div>
+          {validationErrors.password ? (
+            <p className='text-paragraph-xs text-red-600'>{validationErrors.password}</p>
+          ) : (
+            <div className='flex gap-1 text-paragraph-xs text-text-sub-600'>
+              <RiInformationFill className='size-4 shrink-0 text-text-soft-400' />
+              Must contain 1 uppercase letter, 1 number, min. 8 characters.
+            </div>
+          )}
         </div>
 
         {error && (
