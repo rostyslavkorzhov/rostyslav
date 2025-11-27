@@ -68,7 +68,7 @@ export interface Page {
  * Page with relations
  */
 export interface PageWithRelations extends Page {
-  brand: Brand;
+  brand: BrandWithCategory;
   page_type: PageType;
 }
 
