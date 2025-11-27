@@ -185,6 +185,63 @@ export class BrandQueries {
     }
   }
 
+  /**
+   * Update brand by ID (admin only)
+   */
+  async updateBrand(id: string, input: UpdateBrandInput) {
+    try {
+      const { data, error } = await this.client
+        .from('brands')
+        .update({
+          ...(input.name !== undefined && { name: input.name }),
+          ...(input.slug !== undefined && { slug: input.slug }),
+          ...(input.category !== undefined && { category: input.category }),
+          ...(input.country !== undefined && { country: input.country }),
+          ...(input.website_url !== undefined && { website_url: input.website_url }),
+          ...(input.logo_url !== undefined && { logo_url: input.logo_url }),
+          ...(input.tier !== undefined && { tier: input.tier }),
+          ...(input.is_published !== undefined && { is_published: input.is_published }),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select('*, pages(*)')
+        .single();
+
+      if (error) {
+        // Check if brand doesn't exist
+        if (error.code === 'PGRST116' || error.message?.includes('No rows')) {
+          throw new NotFoundError('Brand not found');
+        }
+        throw new ExternalApiError(
+          'Failed to update brand',
+          'Supabase',
+          {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          }
+        );
+      }
+
+      if (!data) {
+        throw new NotFoundError('Brand not found');
+      }
+
+      return data as BrandWithPages;
+    } catch (error) {
+      // Re-throw NotFoundError and ExternalApiError as-is
+      if (error instanceof NotFoundError || error instanceof ExternalApiError) {
+        throw error;
+      }
+      throw new ExternalApiError(
+        'Exception while updating brand',
+        'Supabase',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+    }
+  }
+
 }
 
 /**

@@ -28,5 +28,12 @@ export class BrandService {
   async getBrandById(id: string): Promise<BrandWithPages> {
     return this.brandQueries.getBrandById(id);
   }
+
+  /**
+   * Update brand by ID
+   */
+  async updateBrand(id: string, input: UpdateBrandInput): Promise<BrandWithPages> {
+    return this.brandQueries.updateBrand(id, input);
+  }
 }
 
