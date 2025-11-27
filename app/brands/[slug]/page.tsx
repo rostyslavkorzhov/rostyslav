@@ -63,6 +63,20 @@ export default function BrandDetail() {
   }
 
   const pages = brand.pages || [];
+  const categoryName = (brand as any).category?.name || '';
+
+  // Group pages by page type and get the most recent one of each type
+  const pageMap = new Map();
+  pages.forEach((page: any) => {
+    const pageTypeSlug = page.page_type?.slug;
+    if (pageTypeSlug) {
+      const existing = pageMap.get(pageTypeSlug);
+      if (!existing || new Date(page.created_at) > new Date(existing.created_at)) {
+        pageMap.set(pageTypeSlug, page);
+      }
+    }
+  });
+  const uniquePages = Array.from(pageMap.values());
 
   return (
     <div className='container mx-auto px-5 py-16'>
@@ -70,38 +84,40 @@ export default function BrandDetail() {
         <div className='mb-8'>
           <h1 className='text-title-h1 text-text-strong-950 mb-2'>{brand.name}</h1>
           <p className='text-paragraph-md text-text-sub-600'>
-            {brand.category} • {brand.country}
+            {categoryName}
           </p>
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          {pages
-            .filter((p) => p.is_current)
-            .map((page) => {
-              const thumbnailUrl = page.desktop_screenshot_url || page.mobile_screenshot_url;
-              return (
-                <Link key={page.id} href={`/pages/${page.id}`}>
-                  <div className='rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-regular-md transition-shadow'>
-                    {thumbnailUrl && (
-                      <div className='aspect-video relative bg-bg-weak-50'>
-                        <Image
-                          src={thumbnailUrl}
-                          alt={`${brand.name} ${page.page_type} page`}
-                          fill
-                          className='object-cover'
-                          unoptimized
-                        />
-                      </div>
-                    )}
-                    <div className='p-4'>
-                      <h3 className='text-title-h4 text-text-strong-950 capitalize'>
-                        {page.page_type}
-                      </h3>
+          {uniquePages.map((page: any) => {
+            const thumbnailUrl = page.screenshot_url;
+            const pageTypeName = page.page_type?.name || 'Page';
+            return (
+              <Link key={page.id} href={`/pages/${page.id}`}>
+                <div className='rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden hover:shadow-regular-md transition-shadow'>
+                  {thumbnailUrl && (
+                    <div className='aspect-video relative bg-bg-weak-50'>
+                      <Image
+                        src={thumbnailUrl}
+                        alt={`${brand.name} ${pageTypeName} page`}
+                        fill
+                        className='object-cover'
+                        unoptimized
+                      />
                     </div>
+                  )}
+                  <div className='p-4'>
+                    <h3 className='text-title-h4 text-text-strong-950'>
+                      {pageTypeName}
+                    </h3>
+                    <p className='text-label-sm text-text-sub-600 capitalize'>
+                      {page.view}
+                    </p>
                   </div>
-                </Link>
-              );
-            })}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { PageQueries } from '@/lib/clients/supabase.client';
-import type { Page, CreatePageInput, UpdatePageInput } from '@/types';
+import type { Page, PageWithRelations, CreatePageInput, UpdatePageInput, PageFilters } from '@/types';
 
 /**
  * Page service
@@ -7,6 +7,13 @@ import type { Page, CreatePageInput, UpdatePageInput } from '@/types';
  */
 export class PageService {
   constructor(private pageQueries: PageQueries) {}
+
+  /**
+   * List pages by type with filters (for discover pages)
+   */
+  async listPagesByType(filters: PageFilters = {}) {
+    return this.pageQueries.listPagesByType(filters);
+  }
 
   /**
    * Get pages by brand ID
@@ -18,7 +25,7 @@ export class PageService {
   /**
    * Get page by ID
    */
-  async getPageById(id: string): Promise<Page & { brand: import('@/types').Brand }> {
+  async getPageById(id: string): Promise<PageWithRelations> {
     return this.pageQueries.getPageById(id);
   }
 

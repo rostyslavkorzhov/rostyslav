@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const filters = {
-      category: searchParams.get('category') || undefined,
-      country: searchParams.get('country') || undefined,
+      category_id: searchParams.get('category_id') || undefined,
+      category_slug: searchParams.get('category_slug') || undefined,
       page_type: searchParams.get('page_type') || undefined,
       search: searchParams.get('search') || undefined,
       limit: parseInt(searchParams.get('limit') || '20', 10),

@@ -9,8 +9,18 @@ interface BrandCardProps {
 }
 
 export function BrandCard({ brand }: BrandCardProps) {
-  const homePage = brand.pages?.find((p) => p.page_type === 'home' && p.is_current);
-  const thumbnailUrl = homePage?.desktop_screenshot_url || homePage?.mobile_screenshot_url;
+  // Find a home page (prefer desktop, fallback to mobile)
+  const homePageDesktop = brand.pages?.find(
+    (p) => (p as any).page_type?.slug === 'home' && (p as any).view === 'desktop'
+  );
+  const homePageMobile = brand.pages?.find(
+    (p) => (p as any).page_type?.slug === 'home' && (p as any).view === 'mobile'
+  );
+  const homePage = homePageDesktop || homePageMobile;
+  const thumbnailUrl = homePage?.screenshot_url || null;
+
+  // Get category name from relation
+  const categoryName = (brand as any).category?.name || '';
 
   return (
     <Link href={`/brands/${brand.slug}`}>
@@ -28,7 +38,7 @@ export function BrandCard({ brand }: BrandCardProps) {
         )}
         <div className='p-4'>
           <h3 className='text-title-h4 text-text-strong-950 mb-1'>{brand.name}</h3>
-          <p className='text-label-sm text-text-sub-600'>{brand.category}</p>
+          <p className='text-label-sm text-text-sub-600'>{categoryName}</p>
         </div>
       </div>
     </Link>

@@ -7,16 +7,15 @@ import { useAuth } from '@/hooks/use-auth';
 import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
 import * as Button from '@/components/ui/button';
-import type { Page, Brand } from '@/types';
+import type { PageWithRelations } from '@/types';
 import type { GetPageResponse } from '@/types/api';
 
 export default function PageDetail() {
   const params = useParams();
   const { id } = params;
   const { isAuthenticated } = useAuth();
-  const [page, setPage] = useState<(Page & { brand: Brand }) | null>(null);
+  const [page, setPage] = useState<PageWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
-  const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
 
   useEffect(() => {
     async function loadPage() {
@@ -57,10 +56,8 @@ export default function PageDetail() {
     );
   }
 
-  const screenshotUrl =
-    device === 'desktop'
-      ? page.desktop_screenshot_url
-      : page.mobile_screenshot_url;
+  const screenshotUrl = page.screenshot_url;
+  const categoryName = page.brand.category?.name || '';
 
   return (
     <div className='container mx-auto px-5 py-16'>
@@ -68,23 +65,10 @@ export default function PageDetail() {
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
           {/* Screenshot Viewer */}
           <div>
-            <div className='mb-4 flex gap-2'>
-              <Button.Root
-                variant={device === 'desktop' ? 'primary' : 'neutral'}
-                mode={device === 'desktop' ? 'filled' : 'ghost'}
-                size='small'
-                onClick={() => setDevice('desktop')}
-              >
-                Desktop
-              </Button.Root>
-              <Button.Root
-                variant={device === 'mobile' ? 'primary' : 'neutral'}
-                mode={device === 'mobile' ? 'filled' : 'ghost'}
-                size='small'
-                onClick={() => setDevice('mobile')}
-              >
-                Mobile
-              </Button.Root>
+            <div className='mb-4'>
+              <span className='text-label-sm text-text-sub-600 capitalize'>
+                {page.view} view
+              </span>
             </div>
 
             {screenshotUrl ? (
@@ -101,7 +85,7 @@ export default function PageDetail() {
                 )}
                 <Image
                   src={screenshotUrl}
-                  alt={`${page.brand.name} ${page.page_type} page`}
+                  alt={`${page.brand.name} ${page.page_type.name} page`}
                   width={1200}
                   height={800}
                   className='w-full h-auto'
@@ -122,7 +106,7 @@ export default function PageDetail() {
                 {page.brand.name}
               </h1>
               <p className='text-paragraph-md text-text-sub-600 mb-6'>
-                {page.brand.category} • {page.brand.country}
+                {categoryName}
               </p>
 
               <div className='space-y-4'>
@@ -130,8 +114,17 @@ export default function PageDetail() {
                   <h3 className='text-label-sm font-medium text-text-strong-950 mb-1'>
                     Page Type
                   </h3>
+                  <p className='text-paragraph-md text-text-sub-600'>
+                    {page.page_type.name}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className='text-label-sm font-medium text-text-strong-950 mb-1'>
+                    View
+                  </h3>
                   <p className='text-paragraph-md text-text-sub-600 capitalize'>
-                    {page.page_type}
+                    {page.view}
                   </p>
                 </div>
 
@@ -149,13 +142,13 @@ export default function PageDetail() {
                   </a>
                 </div>
 
-                {page.captured_at && (
+                {page.month && (
                   <div>
                     <h3 className='text-label-sm font-medium text-text-strong-950 mb-1'>
-                      Captured On
+                      Captured Month
                     </h3>
                     <p className='text-paragraph-md text-text-sub-600'>
-                      {new Date(page.captured_at).toLocaleDateString()}
+                      {page.month}
                     </p>
                   </div>
                 )}

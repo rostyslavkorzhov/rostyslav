@@ -2,7 +2,7 @@
  * API request and response types
  */
 
-import type { Brand, BrandWithPages, Page } from './database';
+import type { Brand, BrandWithPages, Page, PageWithRelations } from './database';
 import type { BrandFilters, CreateBrandInput, UpdateBrandInput } from './brand';
 import type { CreatePageInput, CaptureScreenshotRequest } from './page';
 
@@ -26,7 +26,7 @@ export interface GetBrandResponse {
  * Public API: Get page by id response
  */
 export interface GetPageResponse {
-  data: Page & { brand: Brand };
+  data: PageWithRelations;
 }
 
 /**

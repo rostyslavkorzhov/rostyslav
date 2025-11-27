@@ -5,11 +5,13 @@ import type {
   Brand,
   BrandWithPages,
   Page,
+  PageWithRelations,
   BrandFilters,
   CreateBrandInput,
   UpdateBrandInput,
   CreatePageInput,
   UpdatePageInput,
+  PageFilters,
 } from '@/types';
 
 /**
@@ -40,8 +42,8 @@ export class BrandQueries {
   async listBrands(filters: BrandFilters = {}) {
     try {
       const {
-        category,
-        country,
+        category_id,
+        category_slug,
         page_type,
         search,
         limit = 20,
@@ -50,15 +52,15 @@ export class BrandQueries {
 
       let query = this.client
         .from('brands')
-        .select('*, pages(*)', { count: 'exact' })
+        .select('*, category:categories(*), pages(*)', { count: 'exact' })
         .eq('is_published', true);
 
-      if (category) {
-        query = query.eq('category', category);
+      if (category_id) {
+        query = query.eq('category_id', category_id);
       }
 
-      if (country) {
-        query = query.eq('country', country);
+      if (category_slug) {
+        query = query.eq('categories.slug', category_slug);
       }
 
       if (search) {
@@ -66,7 +68,8 @@ export class BrandQueries {
       }
 
       if (page_type) {
-        query = query.eq('pages.page_type', page_type).eq('pages.is_current', true);
+        // Filter by page type through pages relation
+        query = query.eq('pages.page_type_id', page_type);
       }
 
       const { data, error, count } = await query
@@ -109,7 +112,7 @@ export class BrandQueries {
     try {
       const { data, error } = await this.client
         .from('brands')
-        .select('*, pages(*)')
+        .select('*, category:categories(*), pages(*)')
         .eq('slug', slug)
         .eq('is_published', true)
         .single();
@@ -156,7 +159,7 @@ export class BrandQueries {
     try {
       const { data, error } = await this.client
         .from('brands')
-        .select('*, pages(*)')
+        .select('*, category:categories(*), pages(*)')
         .eq('id', id)
         .single();
 
@@ -195,16 +198,15 @@ export class BrandQueries {
         .update({
           ...(input.name !== undefined && { name: input.name }),
           ...(input.slug !== undefined && { slug: input.slug }),
-          ...(input.category !== undefined && { category: input.category }),
-          ...(input.country !== undefined && { country: input.country }),
+          ...(input.description !== undefined && { description: input.description }),
+          ...(input.category_id !== undefined && { category_id: input.category_id }),
           ...(input.website_url !== undefined && { website_url: input.website_url }),
           ...(input.logo_url !== undefined && { logo_url: input.logo_url }),
-          ...(input.tier !== undefined && { tier: input.tier }),
           ...(input.is_published !== undefined && { is_published: input.is_published }),
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
-        .select('*, pages(*)')
+        .select('*, category:categories(*), pages(*)')
         .single();
 
       if (error) {
@@ -251,13 +253,139 @@ export class PageQueries {
   constructor(private client: SupabaseClient) {}
 
   /**
+   * List pages by type with filters (for discover pages)
+   */
+  async listPagesByType(filters: PageFilters = {}) {
+    try {
+      const {
+        page_type_slug,
+        view = 'mobile', // Default to mobile
+        category_slugs,
+        month,
+        brand_id,
+        limit = 20,
+        offset = 0,
+      } = filters;
+
+      // First, get page_type_id if slug is provided
+      let page_type_id: string | undefined;
+      if (page_type_slug) {
+        const { data: pageType } = await this.client
+          .from('page_types')
+          .select('id')
+          .eq('slug', page_type_slug)
+          .single();
+        if (pageType) {
+          page_type_id = pageType.id;
+        }
+      }
+
+      // Get brand IDs if category filtering is needed
+      let brand_ids: string[] | undefined;
+      if (category_slugs && category_slugs.length > 0) {
+        // Get category IDs from slugs
+        const { data: categories } = await this.client
+          .from('categories')
+          .select('id')
+          .in('slug', category_slugs);
+        
+        if (categories && categories.length > 0) {
+          const category_ids = categories.map((c) => c.id);
+          // Get brand IDs for these categories
+          const { data: brands } = await this.client
+            .from('brands')
+            .select('id')
+            .in('category_id', category_ids)
+            .eq('is_published', true);
+          
+          if (brands) {
+            brand_ids = brands.map((b) => b.id);
+          }
+        }
+      }
+
+      // Start with base query including relations
+      let query = this.client
+        .from('pages')
+        .select(
+          '*, brand:brands(*, category:categories(*)), page_type:page_types(*)',
+          { count: 'exact' }
+        );
+
+      // Filter by page type ID
+      if (page_type_id) {
+        query = query.eq('page_type_id', page_type_id);
+      }
+
+      // Filter by view (mobile/desktop)
+      if (view) {
+        query = query.eq('view', view);
+      }
+
+      // Filter by brand IDs (from category filtering)
+      if (brand_ids && brand_ids.length > 0) {
+        query = query.in('brand_id', brand_ids);
+      } else if (brand_ids && brand_ids.length === 0) {
+        // No brands match the category filter, return empty
+        return {
+          data: [] as PageWithRelations[],
+          count: 0,
+          hasMore: false,
+        };
+      }
+
+      // Filter by month
+      if (month) {
+        query = query.eq('month', month);
+      }
+
+      // Filter by brand
+      if (brand_id) {
+        query = query.eq('brand_id', brand_id);
+      }
+
+      // Order by created_at (newest first)
+      const { data, error, count } = await query
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      if (error) {
+        throw new ExternalApiError(
+          'Failed to fetch pages',
+          'Supabase',
+          {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+          }
+        );
+      }
+
+      return {
+        data: (data || []) as PageWithRelations[],
+        count: count || 0,
+        hasMore: (count || 0) > offset + limit,
+      };
+    } catch (error) {
+      if (error instanceof ExternalApiError) {
+        throw error;
+      }
+      throw new ExternalApiError(
+        'Exception while fetching pages',
+        'Supabase',
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+    }
+  }
+
+  /**
    * Get pages by brand ID
    */
   async getPagesByBrand(brandId: string) {
     try {
       const { data, error } = await this.client
         .from('pages')
-        .select('*')
+        .select('*, page_type:page_types(*)')
         .eq('brand_id', brandId)
         .order('created_at', { ascending: false });
 
@@ -293,7 +421,7 @@ export class PageQueries {
     try {
       const { data, error } = await this.client
         .from('pages')
-        .select('*, brand:brands(*)')
+        .select('*, brand:brands(*, category:categories(*)), page_type:page_types(*)')
         .eq('id', id)
         .single();
 
@@ -309,7 +437,7 @@ export class PageQueries {
         );
       }
 
-      return data as Page & { brand: Brand };
+      return data as PageWithRelations;
     } catch (error) {
       if (error instanceof ExternalApiError) {
         throw error;
@@ -327,27 +455,17 @@ export class PageQueries {
    */
   async createPage(input: CreatePageInput) {
     try {
-      // If this is marked as current, unset other current pages of same type
-      if (input.is_current) {
-        await this.client
-          .from('pages')
-          .update({ is_current: false })
-          .eq('brand_id', input.brand_id)
-          .eq('page_type', input.page_type);
-      }
-
       const { data, error } = await this.client
         .from('pages')
         .insert({
           brand_id: input.brand_id,
-          page_type: input.page_type,
+          page_type_id: input.page_type_id,
           page_url: input.page_url,
-          desktop_screenshot_url: input.desktop_screenshot_url || null,
-          mobile_screenshot_url: input.mobile_screenshot_url || null,
-          captured_at: input.captured_at || new Date().toISOString(),
-          is_current: input.is_current ?? true,
+          screenshot_url: input.screenshot_url || null,
+          view: input.view,
+          month: input.month || null,
         })
-        .select()
+        .select('*, page_type:page_types(*)')
         .single();
 
       if (error) {

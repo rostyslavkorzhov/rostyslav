@@ -43,21 +43,20 @@ export default function BrandsPage() {
               <Table.Row>
                 <Table.Head>Name</Table.Head>
                 <Table.Head>Category</Table.Head>
-                <Table.Head>Country</Table.Head>
-                <Table.Head>Tier</Table.Head>
                 <Table.Head>Published</Table.Head>
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {brands.map((brand) => (
-                <Table.Row key={brand.id}>
-                  <Table.Cell className='font-medium'>{brand.name}</Table.Cell>
-                  <Table.Cell>{brand.category}</Table.Cell>
-                  <Table.Cell>{brand.country || 'Global'}</Table.Cell>
-                  <Table.Cell>{brand.tier}</Table.Cell>
-                  <Table.Cell>{brand.is_published ? 'Yes' : 'No'}</Table.Cell>
-                </Table.Row>
-              ))}
+              {brands.map((brand) => {
+                const categoryName = (brand as any).category?.name || 'N/A';
+                return (
+                  <Table.Row key={brand.id}>
+                    <Table.Cell className='font-medium'>{brand.name}</Table.Cell>
+                    <Table.Cell>{categoryName}</Table.Cell>
+                    <Table.Cell>{brand.is_published ? 'Yes' : 'No'}</Table.Cell>
+                  </Table.Row>
+                );
+              })}
             </Table.Body>
           </Table.Root>
         </div>

@@ -2,26 +2,30 @@
  * Page-related types
  */
 
-import type { Page, PageType } from './database';
+import type { Page, PageType, ViewType, PageTypeSlug } from './database';
 
-export type { Page, PageType };
+export type { Page, PageType, ViewType, PageTypeSlug };
 
 /**
- * Page types
+ * Page type slugs
  */
-export const PAGE_TYPES = ['home', 'pdp', 'about'] as const;
+export const PAGE_TYPE_SLUGS: PageTypeSlug[] = ['home', 'product', 'about'];
+
+/**
+ * View types
+ */
+export const VIEW_TYPES: ViewType[] = ['mobile', 'desktop'];
 
 /**
  * Page creation input
  */
 export interface CreatePageInput {
   brand_id: string;
-  page_type: PageType;
+  page_type_id: string;
   page_url: string;
-  desktop_screenshot_url?: string;
-  mobile_screenshot_url?: string;
-  captured_at?: string;
-  is_current?: boolean;
+  screenshot_url?: string | null;
+  view: ViewType;
+  month?: string | null; // e.g., "Nov", "Dec", "Jan"
 }
 
 /**
@@ -29,10 +33,22 @@ export interface CreatePageInput {
  */
 export interface UpdatePageInput {
   page_url?: string;
-  desktop_screenshot_url?: string;
-  mobile_screenshot_url?: string;
-  captured_at?: string;
-  is_current?: boolean;
+  screenshot_url?: string | null;
+  view?: ViewType;
+  month?: string | null;
+}
+
+/**
+ * Page filters for listing
+ */
+export interface PageFilters {
+  page_type_slug?: PageTypeSlug;
+  view?: ViewType;
+  category_slugs?: string[]; // Array of category slugs
+  month?: string;
+  brand_id?: string;
+  limit?: number;
+  offset?: number;
 }
 
 /**
@@ -40,7 +56,7 @@ export interface UpdatePageInput {
  */
 export interface CaptureScreenshotRequest {
   brand_id: string;
-  page_type: PageType;
+  page_type_slug: PageTypeSlug;
   page_url: string;
   capture_desktop?: boolean;
   capture_mobile?: boolean;
