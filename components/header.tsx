@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import * as Button from '@/components/ui/button';
 import * as Dropdown from '@/components/ui/dropdown';
 import * as Drawer from '@/components/ui/drawer';
@@ -33,6 +34,12 @@ const navigationItems = [
 ];
 
 export default function Header() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className='border-b border-stroke-soft-200 bg-bg-white-0'>
       <header className='mx-auto flex h-14 max-w-7xl items-center justify-between px-5'>
@@ -53,6 +60,21 @@ export default function Header() {
           >
             {navigationItems.map((item) => {
               if (item.items) {
+                if (!mounted) {
+                  return (
+                    <Button.Root
+                      key={item.label}
+                      variant='neutral'
+                      mode='ghost'
+                      size='small'
+                      className='text-text-sub-600 hover:text-text-strong-950'
+                      disabled
+                    >
+                      {item.label}
+                      <Button.Icon as={RiArrowDownSLine} />
+                    </Button.Root>
+                  );
+                }
                 return (
                   <Dropdown.Root key={item.label}>
                     <Dropdown.Trigger asChild>
@@ -100,63 +122,75 @@ export default function Header() {
           <DynamicThemeSwitch />
 
           {/* Mobile Menu */}
-          <Drawer.Root>
-            <Drawer.Trigger asChild>
-              <CompactButton.Root
-                variant='ghost'
-                size='large'
-                className='md:hidden'
-                aria-label='Open menu'
-              >
-                <CompactButton.Icon as={RiMenuLine} />
-              </CompactButton.Root>
-            </Drawer.Trigger>
-            <Drawer.Content>
-              <Drawer.Header>
-                <Drawer.Title>Menu</Drawer.Title>
-              </Drawer.Header>
-              <Drawer.Body>
-                <nav className='flex flex-col gap-1 p-5' aria-label='Mobile navigation'>
-                  {navigationItems.map((item) => {
-                    if (item.items) {
-                      return (
-                        <div key={item.label} className='flex flex-col gap-1'>
-                          <div className='px-2 py-1 text-subheading-xs uppercase text-text-soft-400'>
-                            {item.label}
+          {mounted ? (
+            <Drawer.Root>
+              <Drawer.Trigger asChild>
+                <CompactButton.Root
+                  variant='ghost'
+                  size='large'
+                  className='md:hidden'
+                  aria-label='Open menu'
+                >
+                  <CompactButton.Icon as={RiMenuLine} />
+                </CompactButton.Root>
+              </Drawer.Trigger>
+              <Drawer.Content>
+                <Drawer.Header>
+                  <Drawer.Title>Menu</Drawer.Title>
+                </Drawer.Header>
+                <Drawer.Body>
+                  <nav className='flex flex-col gap-1 p-5' aria-label='Mobile navigation'>
+                    {navigationItems.map((item) => {
+                      if (item.items) {
+                        return (
+                          <div key={item.label} className='flex flex-col gap-1'>
+                            <div className='px-2 py-1 text-subheading-xs uppercase text-text-soft-400'>
+                              {item.label}
+                            </div>
+                            {item.items.map((subItem) => (
+                              <Button.Root
+                                key={subItem.label}
+                                variant='neutral'
+                                mode='ghost'
+                                size='small'
+                                asChild
+                                className='justify-start text-text-sub-600 hover:text-text-strong-950'
+                              >
+                                <Link href={subItem.href}>{subItem.label}</Link>
+                              </Button.Root>
+                            ))}
                           </div>
-                          {item.items.map((subItem) => (
-                            <Button.Root
-                              key={subItem.label}
-                              variant='neutral'
-                              mode='ghost'
-                              size='small'
-                              asChild
-                              className='justify-start text-text-sub-600 hover:text-text-strong-950'
-                            >
-                              <Link href={subItem.href}>{subItem.label}</Link>
-                            </Button.Root>
-                          ))}
-                        </div>
-                      );
-                    }
+                        );
+                      }
 
-                    return (
-                      <Button.Root
-                        key={item.label}
-                        variant='neutral'
-                        mode='ghost'
-                        size='small'
-                        asChild
-                        className='justify-start text-text-sub-600 hover:text-text-strong-950'
-                      >
-                        <Link href={item.href}>{item.label}</Link>
-                      </Button.Root>
-                    );
-                  })}
-                </nav>
-              </Drawer.Body>
-            </Drawer.Content>
-          </Drawer.Root>
+                      return (
+                        <Button.Root
+                          key={item.label}
+                          variant='neutral'
+                          mode='ghost'
+                          size='small'
+                          asChild
+                          className='justify-start text-text-sub-600 hover:text-text-strong-950'
+                        >
+                          <Link href={item.href}>{item.label}</Link>
+                        </Button.Root>
+                      );
+                    })}
+                  </nav>
+                </Drawer.Body>
+              </Drawer.Content>
+            </Drawer.Root>
+          ) : (
+            <CompactButton.Root
+              variant='ghost'
+              size='large'
+              className='md:hidden'
+              aria-label='Open menu'
+              disabled
+            >
+              <CompactButton.Icon as={RiMenuLine} />
+            </CompactButton.Root>
+          )}
         </div>
       </header>
     </div>

@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
+import { RiSmartphoneLine, RiComputerLine } from '@remixicon/react';
 import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
-import * as Button from '@/components/ui/button';
 import * as SegmentedControl from '@/components/ui/segmented-control';
 import type { PageWithRelations, ViewType } from '@/types';
 import type { GetPageResponse } from '@/types/api';
@@ -75,19 +75,23 @@ export default function PageDetail() {
           <div>
             <div className='mb-4'>
               {hasBothViews ? (
-                <SegmentedControl.Root
-                  value={selectedView}
-                  onValueChange={(value) => setSelectedView(value as ViewType)}
-                >
-                  <SegmentedControl.List>
-                    <SegmentedControl.Trigger value='mobile'>
-                      Mobile
-                    </SegmentedControl.Trigger>
-                    <SegmentedControl.Trigger value='desktop'>
-                      Desktop
-                    </SegmentedControl.Trigger>
-                  </SegmentedControl.List>
-                </SegmentedControl.Root>
+                <div className='w-full max-w-xs'>
+                  <SegmentedControl.Root
+                    value={selectedView}
+                    onValueChange={(value) => setSelectedView(value as ViewType)}
+                  >
+                    <SegmentedControl.List>
+                      <SegmentedControl.Trigger value='mobile'>
+                        <RiSmartphoneLine className='size-5 shrink-0' />
+                        Mobile
+                      </SegmentedControl.Trigger>
+                      <SegmentedControl.Trigger value='desktop'>
+                        <RiComputerLine className='size-5 shrink-0' />
+                        Desktop
+                      </SegmentedControl.Trigger>
+                    </SegmentedControl.List>
+                  </SegmentedControl.Root>
+                </div>
               ) : (
                 <span className='text-label-sm text-text-sub-600 capitalize'>
                   {page.view} view

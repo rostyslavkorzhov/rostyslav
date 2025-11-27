@@ -1,79 +1,53 @@
-'use client';
+// AlignUI useTabObserver v0.0.0
 
 import * as React from 'react';
 
-interface UseTabObserverOptions {
-  onActiveTabChange?: (prevTab: HTMLElement | null, activeTab: HTMLElement) => void;
+interface TabObserverOptions {
+  onActiveTabChange?: (index: number, element: HTMLElement) => void;
 }
 
-export function useTabObserver({ onActiveTabChange }: UseTabObserverOptions = {}) {
+export function useTabObserver({ onActiveTabChange }: TabObserverOptions = {}) {
   const [mounted, setMounted] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
-  const prevActiveTabRef = React.useRef<HTMLElement | null>(null);
   const onActiveTabChangeRef = React.useRef(onActiveTabChange);
 
-  // Keep ref updated
   React.useEffect(() => {
     onActiveTabChangeRef.current = onActiveTabChange;
   }, [onActiveTabChange]);
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Function to update active tab position
-  const updateActiveTab = React.useCallback(() => {
-    if (!listRef.current) return;
-
-    const list = listRef.current;
-    const activeTab = list.querySelector<HTMLElement>(
-      `[data-state="active"]`
-    );
-
-    if (activeTab && onActiveTabChangeRef.current) {
-      const prevTab = prevActiveTabRef.current;
-      onActiveTabChangeRef.current(prevTab, activeTab);
-      prevActiveTabRef.current = activeTab;
+  const handleUpdate = React.useCallback(() => {
+    if (listRef.current) {
+      const tabs = listRef.current.querySelectorAll('[role="tab"]');
+      tabs.forEach((el, i) => {
+        if (el.getAttribute('data-state') === 'active') {
+          onActiveTabChangeRef.current?.(i, el as HTMLElement);
+        }
+      });
     }
   }, []);
 
-  // Use MutationObserver to watch for data-state changes
   React.useEffect(() => {
-    if (!listRef.current || !mounted) return;
+    setMounted(true);
 
-    const list = listRef.current;
+    const resizeObserver = new ResizeObserver(handleUpdate);
+    const mutationObserver = new MutationObserver(handleUpdate);
 
-    // Initial update
-    updateActiveTab();
-
-    // Watch for attribute changes on trigger elements
-    const observer = new MutationObserver(() => {
-      updateActiveTab();
-    });
-
-    // Observe all trigger elements for data-state changes
-    const triggers = list.querySelectorAll('[data-state]');
-    triggers.forEach((trigger) => {
-      observer.observe(trigger, {
+    if (listRef.current) {
+      resizeObserver.observe(listRef.current);
+      mutationObserver.observe(listRef.current, {
+        childList: true,
+        subtree: true,
         attributes: true,
-        attributeFilter: ['data-state'],
       });
-    });
+    }
 
-    // Also observe the list itself for child changes (in case triggers are added dynamically)
-    observer.observe(list, {
-      childList: true,
-      subtree: true,
-    });
+    handleUpdate();
 
     return () => {
-      observer.disconnect();
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
     };
-  }, [mounted, updateActiveTab]);
+  }, []);
 
-  return {
-    mounted,
-    listRef,
-  };
+  return { mounted, listRef };
 }
-

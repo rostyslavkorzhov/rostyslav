@@ -49,6 +49,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^8",
     "eslint-config-next": "^16.0.3",
     "postcss": "^8",
