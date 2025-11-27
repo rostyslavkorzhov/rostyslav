@@ -15,16 +15,16 @@ import { ZodError } from 'zod';
 export function extractFieldErrors<T extends Record<string, string>>(
   error: ZodError
 ): Partial<T> {
-  const errors: Partial<T> = {};
+  const errors: Record<string, string> = {};
   
   error.issues.forEach((issue) => {
-    const field = issue.path[0] as keyof T;
+    const field = issue.path[0];
     if (field && typeof field === 'string') {
-      errors[field] = issue.message as T[keyof T];
+      errors[field] = issue.message;
     }
   });
   
-  return errors;
+  return errors as Partial<T>;
 }
 
 /**
