@@ -46,7 +46,11 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation Menu */}
-          <nav className='hidden items-center gap-1 md:flex' aria-label='Main navigation'>
+          <nav
+            className='hidden items-center gap-1 md:flex'
+            aria-label='Main navigation'
+            suppressHydrationWarning
+          >
             {navigationItems.map((item) => {
               if (item.items) {
                 return (
@@ -92,7 +96,7 @@ export default function Header() {
         </div>
 
         {/* Right side actions */}
-        <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-4' suppressHydrationWarning>
           <DynamicThemeSwitch />
 
           {/* Mobile Menu */}

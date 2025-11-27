@@ -25,7 +25,7 @@ export function FilterBar({
   onFilterChange,
 }: FilterBarProps) {
   return (
-    <div className='flex flex-wrap gap-4 mb-8'>
+    <div className='flex flex-wrap gap-4 mb-8' suppressHydrationWarning>
       <Input
         placeholder='Search brands...'
         value={search || ''}
