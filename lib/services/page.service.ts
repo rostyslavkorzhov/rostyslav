@@ -24,8 +24,9 @@ export class PageService {
 
   /**
    * Get page by ID
+   * Returns the requested page and its sibling (mobile/desktop) if available
    */
-  async getPageById(id: string): Promise<PageWithRelations> {
+  async getPageById(id: string): Promise<{ page: PageWithRelations; siblingPage: PageWithRelations | null }> {
     return this.pageQueries.getPageById(id);
   }
 

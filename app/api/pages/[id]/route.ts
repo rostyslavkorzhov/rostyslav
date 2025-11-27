@@ -23,10 +23,11 @@ export async function GET(
     }
 
     const pageService = getPageService();
-    const page = await pageService.getPageById(id);
+    const { page, siblingPage } = await pageService.getPageById(id);
 
     const response: GetPageResponse = {
       data: page,
+      siblingPage: siblingPage || null,
     };
 
     return NextResponse.json(response);

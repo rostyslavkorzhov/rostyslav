@@ -3,18 +3,19 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { useAuth } from '@/hooks/use-auth';
 import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
 import * as Button from '@/components/ui/button';
-import type { PageWithRelations } from '@/types';
+import * as SegmentedControl from '@/components/ui/segmented-control';
+import type { PageWithRelations, ViewType } from '@/types';
 import type { GetPageResponse } from '@/types/api';
 
 export default function PageDetail() {
   const params = useParams();
   const { id } = params;
-  const { isAuthenticated } = useAuth();
   const [page, setPage] = useState<PageWithRelations | null>(null);
+  const [siblingPage, setSiblingPage] = useState<PageWithRelations | null>(null);
+  const [selectedView, setSelectedView] = useState<ViewType>('desktop');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +26,10 @@ export default function PageDetail() {
 
         const data: GetPageResponse = await response.json();
         setPage(data.data);
+        setSiblingPage(data.siblingPage || null);
+        
+        // Set default view to current page's view
+        setSelectedView(data.data.view);
       } catch (error) {
         console.error('Failed to load page:', error);
       } finally {
@@ -56,8 +61,11 @@ export default function PageDetail() {
     );
   }
 
-  const screenshotUrl = page.screenshot_url;
+  // Determine which page to display based on selected view
+  const displayPage = selectedView === page.view ? page : (siblingPage || page);
+  const screenshotUrl = displayPage?.screenshot_url;
   const categoryName = page.brand.category?.name || '';
+  const hasBothViews = !!siblingPage;
 
   return (
     <div className='container mx-auto px-5 py-16'>
@@ -66,26 +74,32 @@ export default function PageDetail() {
           {/* Screenshot Viewer */}
           <div>
             <div className='mb-4'>
-              <span className='text-label-sm text-text-sub-600 capitalize'>
-                {page.view} view
-              </span>
+              {hasBothViews ? (
+                <SegmentedControl.Root
+                  value={selectedView}
+                  onValueChange={(value) => setSelectedView(value as ViewType)}
+                >
+                  <SegmentedControl.List>
+                    <SegmentedControl.Trigger value='mobile'>
+                      Mobile
+                    </SegmentedControl.Trigger>
+                    <SegmentedControl.Trigger value='desktop'>
+                      Desktop
+                    </SegmentedControl.Trigger>
+                  </SegmentedControl.List>
+                </SegmentedControl.Root>
+              ) : (
+                <span className='text-label-sm text-text-sub-600 capitalize'>
+                  {page.view} view
+                </span>
+              )}
             </div>
 
             {screenshotUrl ? (
               <div className='relative rounded-lg border border-stroke-soft-200 overflow-hidden bg-bg-weak-50'>
-                {!isAuthenticated && (
-                  <div className='absolute inset-0 bg-overlay backdrop-blur-sm z-10 flex items-center justify-center'>
-                    <div className='text-center text-static-white p-6'>
-                      <p className='text-title-h5 mb-2'>Sign up to view</p>
-                      <p className='text-paragraph-sm opacity-90'>
-                        Create a free account to see full screenshots
-                      </p>
-                    </div>
-                  </div>
-                )}
                 <Image
                   src={screenshotUrl}
-                  alt={`${page.brand.name} ${page.page_type.name} page`}
+                  alt={`${page.brand.name} ${page.page_type.name} page - ${selectedView} view`}
                   width={1200}
                   height={800}
                   className='w-full h-auto'

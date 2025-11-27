@@ -195,6 +195,7 @@ export class PageQueries {
 
   /**
    * Get page by ID
+   * Also fetches the sibling page (same brand_id, page_type_id, page_url, different view)
    */
   async getPageById(id: string) {
     try {
@@ -216,7 +217,26 @@ export class PageQueries {
         );
       }
 
-      return data as PageWithRelations;
+      const page = data as PageWithRelations;
+
+      // Fetch sibling page (same brand_id, page_type_id, page_url, but different view)
+      const siblingView = page.view === 'mobile' ? 'desktop' : 'mobile';
+      const { data: siblingData, error: siblingError } = await this.client
+        .from('pages')
+        .select('*, brand:brands(*, category:categories(*)), page_type:page_types(*)')
+        .eq('brand_id', page.brand_id)
+        .eq('page_type_id', page.page_type_id)
+        .eq('page_url', page.page_url)
+        .eq('view', siblingView)
+        .maybeSingle();
+
+      // Sibling page not found is not an error, just return null
+      const siblingPage = siblingError ? null : (siblingData as PageWithRelations | null);
+
+      return {
+        page,
+        siblingPage,
+      };
     } catch (error) {
       if (error instanceof ExternalApiError) {
         throw error;
