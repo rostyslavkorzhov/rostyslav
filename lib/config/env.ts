@@ -20,7 +20,6 @@ const clientEnvSchema = z.object({
  * Server-only environment variable schema
  */
 const serverEnvSchema = z.object({
-  URLBOX_API_SECRET: z.string().min(1, 'URLBOX_API_SECRET is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
 });
 
@@ -92,14 +91,12 @@ function parseEnv(): Env {
     // Return a partial env object for client (server vars will be undefined but that's ok)
     return {
       ...clientEnv,
-      URLBOX_API_SECRET: process.env.URLBOX_API_SECRET || '',
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
     } as Env;
   }
 
   // On server, validate all variables
   const parsed = fullEnvSchema.safeParse({
-    URLBOX_API_SECRET: process.env.URLBOX_API_SECRET,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -133,16 +130,6 @@ function parseEnv(): Env {
  * Uses lazy getters to only validate when accessed
  */
 export const config = {
-  urlbox: {
-    get apiSecret() {
-      if (!isServer) {
-        throw new Error('URLBOX_API_SECRET is only available on the server');
-      }
-      return parseEnv().URLBOX_API_SECRET;
-    },
-    baseUrl: 'https://api.urlbox.com/v1',
-    asyncEndpoint: 'https://api.urlbox.com/v1/render/async',
-  },
   supabase: {
     get url() {
       // Use client env parser for public variables (works on both client and server)

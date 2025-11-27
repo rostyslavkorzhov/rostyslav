@@ -28,12 +28,5 @@ export class PageService {
   async createPage(input: CreatePageInput): Promise<Page> {
     return this.pageQueries.createPage(input);
   }
-
-  /**
-   * Update page screenshots (admin)
-   */
-  async updatePageScreenshots(id: string, input: UpdatePageInput): Promise<Page> {
-    return this.pageQueries.updatePageScreenshots(id, input);
-  }
 }
 

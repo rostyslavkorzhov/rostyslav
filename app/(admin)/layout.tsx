@@ -51,12 +51,6 @@ export default function AdminLayout({
             >
               Brands
             </Link>
-            <Link
-              href='/admin/screenshots'
-              className='block rounded-lg px-4 py-2 text-text-sub-600 hover:bg-bg-weak-50'
-            >
-              Screenshots
-            </Link>
           </nav>
         </div>
       </aside>

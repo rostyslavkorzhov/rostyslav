@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { LoadingState } from '@/components/ui/loading-state';
+import * as Table from '@/components/ui/table';
 import type { Brand } from '@/types';
 
 export default function BrandsPage() {
@@ -13,8 +12,6 @@ export default function BrandsPage() {
   useEffect(() => {
     async function loadBrands() {
       try {
-        // Fetch brands from admin API (will need to be implemented)
-        // For now, using public API as placeholder
         const response = await fetch('/api/brands?limit=100');
         if (response.ok) {
           const data = await response.json();
@@ -31,40 +28,38 @@ export default function BrandsPage() {
 
   return (
     <div>
-      <div className='mb-6 flex items-center justify-between'>
-        <h1 className='text-title-h1 text-text-strong-950'>Brands</h1>
-        <Link href='/admin/brands/new'>
-          <Button>Create Brand</Button>
-        </Link>
-      </div>
+      <h1 className='text-title-h1 text-text-strong-950 mb-6'>Brands</h1>
 
       {loading ? (
         <LoadingState />
       ) : brands.length === 0 ? (
         <div className='rounded-lg border border-stroke-soft-200 p-8 text-center'>
-          <p className='text-text-sub-600 mb-4'>No brands yet</p>
-          <Link href='/admin/brands/new'>
-            <Button>Create your first brand</Button>
-          </Link>
+          <p className='text-text-sub-600'>No brands found</p>
         </div>
       ) : (
-        <div className='space-y-4'>
-          {brands.map((brand) => (
-            <div
-              key={brand.id}
-              className='rounded-lg border border-stroke-soft-200 p-4'
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <h3 className='text-title-h4 text-text-strong-950'>{brand.name}</h3>
-                  <p className='text-text-sub-600'>{brand.category}</p>
-                </div>
-                <Link href={`/admin/brands/${brand.id}`}>
-                  <Button variant='neutral' mode='stroke'>Edit</Button>
-                </Link>
-              </div>
-            </div>
-          ))}
+        <div className='rounded-lg border border-stroke-soft-200 overflow-hidden'>
+          <Table.Root>
+            <Table.Header>
+              <Table.Row>
+                <Table.Head>Name</Table.Head>
+                <Table.Head>Category</Table.Head>
+                <Table.Head>Country</Table.Head>
+                <Table.Head>Tier</Table.Head>
+                <Table.Head>Published</Table.Head>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {brands.map((brand) => (
+                <Table.Row key={brand.id}>
+                  <Table.Cell className='font-medium'>{brand.name}</Table.Cell>
+                  <Table.Cell>{brand.category}</Table.Cell>
+                  <Table.Cell>{brand.country || 'Global'}</Table.Cell>
+                  <Table.Cell>{brand.tier}</Table.Cell>
+                  <Table.Cell>{brand.is_published ? 'Yes' : 'No'}</Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
         </div>
       )}
     </div>
