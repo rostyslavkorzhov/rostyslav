@@ -24,12 +24,10 @@ export function createMiddlewareClient(
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          // Update request cookies (for reading in middleware)
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value);
-          });
-          // Update response cookies (for sending to browser)
           cookiesToSet.forEach(({ name, value, options }) => {
+            // Update request cookies (for reading in middleware)
+            request.cookies.set(name, value);
+            // Update response cookies (for sending to browser)
             response.cookies.set(name, value, options);
           });
         },
