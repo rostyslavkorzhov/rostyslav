@@ -23,11 +23,11 @@ function ComponentShowcase({
 }
 
 const mockCategories = [
-  { id: '1', name: 'Fashion', slug: 'fashion' },
-  { id: '2', name: 'Electronics', slug: 'electronics' },
-  { id: '3', name: 'Home & Garden', slug: 'home-garden' },
-  { id: '4', name: 'Sports', slug: 'sports' },
-  { id: '5', name: 'Books', slug: 'books' },
+  { id: '1', name: 'Fashion', slug: 'fashion', created_at: '2024-01-01T00:00:00Z' },
+  { id: '2', name: 'Electronics', slug: 'electronics', created_at: '2024-01-01T00:00:00Z' },
+  { id: '3', name: 'Home & Garden', slug: 'home-garden', created_at: '2024-01-01T00:00:00Z' },
+  { id: '4', name: 'Sports', slug: 'sports', created_at: '2024-01-01T00:00:00Z' },
+  { id: '5', name: 'Books', slug: 'books', created_at: '2024-01-01T00:00:00Z' },
 ];
 
 export function PatternsShowcase() {
