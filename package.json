@@ -29,6 +29,7 @@
     "@remixicon/react": "^4.5.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.49.2",
+    "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.4",
     "date-fns": "^4",

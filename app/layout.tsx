@@ -6,6 +6,7 @@ import { cn } from '@/utils/cn';
 import { Provider as TooltipProvider } from '@/components/ui/tooltip';
 import { NotificationProvider } from '@/components/ui/notification-provider';
 import Header from '@/components/header';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const switzer = localFont({
   src: './fonts/Switzer-Variable.woff2',
@@ -45,6 +46,7 @@ export default function RootLayout({
           </TooltipProvider>
         </ThemeProvider>
         <NotificationProvider />
+        <SpeedInsights />
       </body>
     </html>
   );
