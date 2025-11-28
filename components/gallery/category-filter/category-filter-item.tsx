@@ -16,23 +16,58 @@ const ICON_CLASS = 'size-4 shrink-0 text-text-soft-400';
 const CHECKBOX_CONTAINER_CLASS = 'flex items-center justify-center shrink-0 size-5 rounded';
 const CHECKBOX_SVG_CLASS = 'size-5';
 
+// Static checkbox icons - defined outside component to avoid recreation
+const CheckedIcon = () => (
+  <svg
+    width='20'
+    height='20'
+    viewBox='0 0 20 20'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+    className={CHECKBOX_SVG_CLASS}
+  >
+    <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
+    <path
+      d='M8.33333 13.7292L5 10.3958L6.0625 9.33333L8.33333 11.6042L13.9375 6L15 7.0625L8.33333 13.7292Z'
+      fill='white'
+    />
+  </svg>
+);
+
+const UncheckedIcon = () => (
+  <svg
+    width='20'
+    height='20'
+    viewBox='0 0 20 20'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+    className={CHECKBOX_SVG_CLASS}
+  >
+    <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
+  </svg>
+);
+
 interface CategoryFilterItemProps {
   category: Category;
   isSelected: boolean;
-  slug: string;
   onToggle: (slug: string) => void;
 }
 
 export const CategoryFilterItem = React.memo(function CategoryFilterItem({
   category,
   isSelected,
-  slug,
   onToggle,
 }: CategoryFilterItemProps) {
-  const Icon = getCategoryIcon(category.slug);
+  // Memoize the icon component lookup
+  const Icon = React.useMemo(
+    () => getCategoryIcon(category.slug),
+    [category.slug]
+  );
+
+  // Stable click handler
   const handleClick = React.useCallback(() => {
-    onToggle(slug);
-  }, [slug, onToggle]);
+    onToggle(category.slug);
+  }, [onToggle, category.slug]);
 
   return (
     <button
@@ -42,33 +77,7 @@ export const CategoryFilterItem = React.memo(function CategoryFilterItem({
     >
       {/* Selection indicator */}
       <div className={CHECKBOX_CONTAINER_CLASS}>
-        {isSelected ? (
-          <svg
-            width='20'
-            height='20'
-            viewBox='0 0 20 20'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-            className={CHECKBOX_SVG_CLASS}
-          >
-            <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
-            <path
-              d='M8.33333 13.7292L5 10.3958L6.0625 9.33333L8.33333 11.6042L13.9375 6L15 7.0625L8.33333 13.7292Z'
-              fill='white'
-            />
-          </svg>
-        ) : (
-          <svg
-            width='20'
-            height='20'
-            viewBox='0 0 20 20'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-            className={CHECKBOX_SVG_CLASS}
-          >
-            <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
-          </svg>
-        )}
+        {isSelected ? <CheckedIcon /> : <UncheckedIcon />}
       </div>
 
       {/* Category name */}
@@ -79,4 +88,3 @@ export const CategoryFilterItem = React.memo(function CategoryFilterItem({
     </button>
   );
 });
-

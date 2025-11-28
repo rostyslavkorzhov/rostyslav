@@ -32,7 +32,11 @@ const CategoryPill = React.memo(function CategoryPill({
   category,
   onRemove,
 }: CategoryPillProps) {
-  const Icon = getCategoryIcon(category.slug);
+  const Icon = React.useMemo(
+    () => getCategoryIcon(category.slug),
+    [category.slug]
+  );
+
   const handleClick = React.useCallback(() => {
     onRemove(category.slug);
   }, [category.slug, onRemove]);
@@ -55,11 +59,11 @@ export const CategoryFilterPills = React.memo(function CategoryFilterPills({
   onRemove,
   className,
 }: CategoryFilterPillsProps) {
-  // Memoize filtered categories to avoid re-filtering on every render
-  const selectedCategories = React.useMemo(
-    () => categories.filter((cat) => selectedSlugs.includes(cat.slug)),
-    [categories, selectedSlugs],
-  );
+  // Memoize filtered categories using Set for O(1) lookup
+  const selectedCategories = React.useMemo(() => {
+    const slugSet = new Set(selectedSlugs);
+    return categories.filter((cat) => slugSet.has(cat.slug));
+  }, [categories, selectedSlugs]);
 
   if (selectedCategories.length === 0) {
     return null;
@@ -73,4 +77,3 @@ export const CategoryFilterPills = React.memo(function CategoryFilterPills({
     </div>
   );
 });
-

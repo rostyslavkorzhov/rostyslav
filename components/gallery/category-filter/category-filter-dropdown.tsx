@@ -23,6 +23,12 @@ export function CategoryFilterDropdown({
   onOpenChange,
   children,
 }: CategoryFilterDropdownProps) {
+  // Memoize the selected slugs Set for O(1) lookup
+  const selectedSet = React.useMemo(
+    () => new Set(selectedSlugs),
+    [selectedSlugs]
+  );
+
   return (
     <Popover.Root open={isOpen} onOpenChange={onOpenChange}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
@@ -42,8 +48,7 @@ export function CategoryFilterDropdown({
             <CategoryFilterItem
               key={category.id}
               category={category}
-              isSelected={selectedSlugs.includes(category.slug)}
-              slug={category.slug}
+              isSelected={selectedSet.has(category.slug)}
               onToggle={onToggle}
             />
           ))}
@@ -52,4 +57,3 @@ export function CategoryFilterDropdown({
     </Popover.Root>
   );
 }
-

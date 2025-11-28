@@ -30,6 +30,7 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // Memoized toggle handler - stable reference across renders
   const handleToggle = React.useCallback(
     (slug: string) => {
       if (selectedSlugs.includes(slug)) {
@@ -41,6 +42,7 @@ export function CategoryFilter({
     [selectedSlugs, onSelectionChange],
   );
 
+  // Memoized clear handler - stable reference
   const handleClear = React.useCallback(() => {
     onSelectionChange([]);
   }, [onSelectionChange]);
@@ -74,4 +76,3 @@ export function CategoryFilter({
     </div>
   );
 }
-
