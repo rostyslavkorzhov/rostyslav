@@ -1,6 +1,6 @@
 'use client';
 
-import * as Select from '@/components/ui/select';
+import * as SegmentedControl from '@/components/ui/segmented-control';
 import { CategoryFilter } from '@/components/gallery/category-filter';
 import type { Category, ViewType } from '@/types';
 
@@ -20,27 +20,24 @@ export function DiscoverFilters({
   onCategoriesChange,
 }: DiscoverFiltersProps) {
   return (
-    <div className='flex flex-wrap gap-4 mb-8 items-center' suppressHydrationWarning>
-      {/* View selector */}
-      <Select.Root
-        value={view}
-        onValueChange={(value) => onViewChange(value as ViewType)}
-      >
-        <Select.Trigger className='min-w-[140px]'>
-          <Select.Value />
-        </Select.Trigger>
-        <Select.Content>
-          <Select.Item value='mobile'>Mobile</Select.Item>
-          <Select.Item value='desktop'>Desktop</Select.Item>
-        </Select.Content>
-      </Select.Root>
-
+    <div className='flex justify-between items-center mb-8 gap-4' suppressHydrationWarning>
       {/* Category filter */}
       <CategoryFilter
         categories={categories}
         selectedSlugs={selectedCategories}
         onSelectionChange={onCategoriesChange}
       />
+
+      {/* View selector */}
+      <SegmentedControl.Root
+        value={view}
+        onValueChange={(value) => onViewChange(value as ViewType)}
+      >
+        <SegmentedControl.List>
+          <SegmentedControl.Trigger value='mobile'>Mobile</SegmentedControl.Trigger>
+          <SegmentedControl.Trigger value='desktop'>Desktop</SegmentedControl.Trigger>
+        </SegmentedControl.List>
+      </SegmentedControl.Root>
     </div>
   );
 }
