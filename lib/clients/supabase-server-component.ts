@@ -28,7 +28,7 @@ export async function createServerComponentClient() {
             );
           } catch {
             // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing user sessions.
+            // This can be ignored if you have proxy refreshing user sessions.
           }
         },
       },

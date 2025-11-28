@@ -14,7 +14,7 @@ export default async function AdminLayout({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Middleware should have already redirected, but verify for defense in depth
+  // Proxy should have already redirected, but verify for defense in depth
   if (!user) {
     redirect('/login?redirect=/admin');
   }

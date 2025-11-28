@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@/lib/clients/supabase-middleware';
 import { isAdmin } from '@/lib/utils/auth';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Create response to allow cookie updates
   let response = NextResponse.next({
     request: {
@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Create Supabase client for middleware
+  // Create Supabase client for proxy
   const supabase = createMiddlewareClient(request, response);
 
   // Refresh auth token - required for Server Components
