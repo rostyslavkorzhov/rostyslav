@@ -6,6 +6,7 @@ import { PageGrid } from '@/components/gallery/page-grid';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
+import { PageContainer } from '@/components/page-container';
 import type { PageWithRelations, Category, ViewType, PageTypeSlug } from '@/types';
 
 const VALID_TYPES: PageTypeSlug[] = ['product', 'home', 'about'];
@@ -108,53 +109,51 @@ export default function DiscoverPage() {
   // Show error for invalid type
   if (!isValidType) {
     return (
-      <div className='container mx-auto px-5 py-16'>
+      <PageContainer>
         <ErrorState
           title='Invalid page type'
           message='Page type must be product, home, or about.'
         />
-      </div>
+      </PageContainer>
     );
   }
 
   const pageTypeName = type.charAt(0).toUpperCase() + type.slice(1);
 
   return (
-    <div className='container mx-auto flex-1 px-5 py-16'>
-      <div className='mx-auto max-w-7xl'>
-        <div className='mb-8 text-center'>
-          <h1 className='text-title-h1 text-text-strong-950 mb-4'>
-            Discover {pageTypeName} Pages
-          </h1>
-          <p className='text-paragraph-lg text-text-sub-600'>
-            Browse {pageTypeName.toLowerCase()} pages from top e-commerce brands
-          </p>
-        </div>
-
-        <DiscoverFilters
-          view={view}
-          selectedCategories={selectedCategories}
-          categories={categories}
-          onViewChange={(newView) => updateFilters(newView)}
-          onCategoriesChange={(newCategories) => updateFilters(undefined, newCategories)}
-        />
-
-        {loading ? (
-          <LoadingState message='Loading pages...' />
-        ) : (
-          <>
-            <PageGrid pages={pages} />
-            {hasMore && (
-              <div className='mt-8 text-center'>
-                <p className='text-label-sm text-text-sub-600'>
-                  Showing {pages.length} of {count} pages
-                </p>
-              </div>
-            )}
-          </>
-        )}
+    <PageContainer>
+      <div className='mb-8 text-center'>
+        <h1 className='text-title-h1 text-text-strong-950 mb-4'>
+          Discover {pageTypeName} Pages
+        </h1>
+        <p className='text-paragraph-lg text-text-sub-600'>
+          Browse {pageTypeName.toLowerCase()} pages from top e-commerce brands
+        </p>
       </div>
-    </div>
+
+      <DiscoverFilters
+        view={view}
+        selectedCategories={selectedCategories}
+        categories={categories}
+        onViewChange={(newView) => updateFilters(newView)}
+        onCategoriesChange={(newCategories) => updateFilters(undefined, newCategories)}
+      />
+
+      {loading ? (
+        <LoadingState message='Loading pages...' />
+      ) : (
+        <>
+          <PageGrid pages={pages} />
+          {hasMore && (
+            <div className='mt-8 text-center'>
+              <p className='text-label-sm text-text-sub-600'>
+                Showing {pages.length} of {count} pages
+              </p>
+            </div>
+          )}
+        </>
+      )}
+    </PageContainer>
   );
 }
 
