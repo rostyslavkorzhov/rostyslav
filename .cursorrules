@@ -1,0 +1,85 @@
+# Project Rules for Best of Ecom
+
+## Design System & Component Reuse
+
+**CRITICAL: Always prioritize existing design library tokens and components before creating new ones.**
+
+### Component Reuse Priority
+1. **First**: Check if an existing AlignUI component in `components/ui/` can be used
+2. **Second**: Compose new sections/components from existing AlignUI components (buttons, checkboxes, inputs, etc.)
+3. **Third**: Only create custom components if absolutely necessary, and always use AlignUI design tokens
+
+### Design Token Usage
+- **Always use AlignUI design tokens** from `tailwind.config.ts` instead of Tailwind defaults
+- Use approved tokens for:
+  - Typography: `text-title-h*`, `text-label-*`, `text-paragraph-*`, `text-subheading-*`
+  - Colors: `bg-bg-*`, `text-text-*`, `border-stroke-*`, `bg-primary-*`, etc.
+  - Shadows: `shadow-regular-*`, `shadow-button-*-focus`
+  - Border radius: `rounded-lg`, `rounded-xl`, `rounded-10`, `rounded-20`
+- **Never use** generic Tailwind classes like `text-lg`, `bg-white`, `shadow-md`, `text-gray-*`
+
+### Component Decision Tree
+When creating or modifying components:
+1. Does AlignUI have an equivalent component? → Use AlignUI component
+2. Can existing AlignUI components be composed? → Create composed component
+3. Is this domain-specific and appropriate to be custom? → Use AlignUI design tokens
+
+### Reusable Pattern Components
+Always use existing pattern components when available:
+- `LoadingState` - for loading indicators
+- `EmptyState` - for empty states
+- `ErrorState` - for error displays
+- `Alert` - for notifications and messages
+
+### Reference Documentation
+- See `documentation/COMPONENT_LIBRARY_AUDIT.md` for approved component usage patterns
+- See `tailwind.config.ts` for all available design tokens
+
+## Code Style and Structure
+
+- Write concise, technical TypeScript code with accurate examples
+- Use functional and declarative programming patterns; avoid classes
+- Prefer iteration and modularization over code duplication
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError)
+- Structure files: exported component, subcomponents, helpers, static content, types
+
+## Naming Conventions
+
+- Use lowercase with dashes for directories (e.g., components/auth-wizard)
+- Favor named exports for components
+
+## TypeScript Usage
+
+- Use TypeScript for all code; prefer interfaces over types
+- Avoid enums; use maps instead
+- Use functional components with TypeScript interfaces
+
+## Syntax and Formatting
+
+- Use the "function" keyword for pure functions
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements
+- Use declarative JSX
+
+## UI and Styling
+
+- Use Shadcn UI, Radix, and Tailwind for components and styling
+- Implement responsive design with Tailwind CSS; use a mobile-first approach
+
+## Performance Optimization
+
+- Minimize 'use client', 'useEffect', and 'setState'; favor React Server Components (RSC)
+- Wrap client components in Suspense with fallback
+- Use dynamic loading for non-critical components
+- Optimize images: use WebP format, include size data, implement lazy loading
+
+## Key Conventions
+
+- Use 'nuqs' for URL search parameter state management
+- Optimize Web Vitals (LCP, CLS, FID)
+- Limit 'use client':
+  - Favor server components and Next.js SSR
+  - Use only for Web API access in small components
+  - Avoid for data fetching or state management
+
+Follow Next.js docs for Data Fetching, Rendering, and Routing.
+
