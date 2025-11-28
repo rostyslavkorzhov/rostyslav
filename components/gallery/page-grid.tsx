@@ -31,7 +31,6 @@ export function PageGrid({ pages }: PageGridProps) {
                   alt={`${page.brand.name} ${page.page_type.name} page (${page.view})`}
                   fill
                   className='object-cover'
-                  unoptimized
                 />
               </div>
             )}
