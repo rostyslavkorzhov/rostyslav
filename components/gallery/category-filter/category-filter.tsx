@@ -7,6 +7,14 @@ import { CategoryFilterDropdown } from './category-filter-dropdown';
 import { CategoryFilterPills } from './category-filter-pills';
 import type { Category } from '@/types';
 
+// Pre-compute static className
+const CLEAR_BUTTON_CLASS = cn(
+  'text-label-md text-text-soft-400',
+  'transition-colors duration-200 ease-out',
+  'hover:text-text-strong-950',
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base focus-visible:ring-offset-2',
+);
+
 interface CategoryFilterProps {
   categories: Category[];
   selectedSlugs: string[];
@@ -22,17 +30,20 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const handleToggle = (slug: string) => {
-    if (selectedSlugs.includes(slug)) {
-      onSelectionChange(selectedSlugs.filter((s) => s !== slug));
-    } else {
-      onSelectionChange([...selectedSlugs, slug]);
-    }
-  };
+  const handleToggle = React.useCallback(
+    (slug: string) => {
+      if (selectedSlugs.includes(slug)) {
+        onSelectionChange(selectedSlugs.filter((s) => s !== slug));
+      } else {
+        onSelectionChange([...selectedSlugs, slug]);
+      }
+    },
+    [selectedSlugs, onSelectionChange],
+  );
 
-  const handleClear = () => {
+  const handleClear = React.useCallback(() => {
     onSelectionChange([]);
-  };
+  }, [onSelectionChange]);
 
   const selectedCount = selectedSlugs.length;
   const hasSelection = selectedCount > 0;
@@ -56,16 +67,7 @@ export function CategoryFilter({
       />
 
       {hasSelection && (
-        <button
-          type='button'
-          onClick={handleClear}
-          className={cn(
-            'text-label-md text-text-soft-400',
-            'transition-colors duration-200 ease-out',
-            'hover:text-text-strong-950',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base focus-visible:ring-offset-2',
-          )}
-        >
+        <button type='button' onClick={handleClear} className={CLEAR_BUTTON_CLASS}>
           Clear
         </button>
       )}

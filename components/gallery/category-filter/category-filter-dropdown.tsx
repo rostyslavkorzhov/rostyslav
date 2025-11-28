@@ -15,7 +15,7 @@ interface CategoryFilterDropdownProps {
   children: React.ReactNode;
 }
 
-export const CategoryFilterDropdown = React.memo(function CategoryFilterDropdown({
+export function CategoryFilterDropdown({
   categories,
   selectedSlugs,
   onToggle,
@@ -23,31 +23,6 @@ export const CategoryFilterDropdown = React.memo(function CategoryFilterDropdown
   onOpenChange,
   children,
 }: CategoryFilterDropdownProps) {
-  // Convert selectedSlugs array to Set for O(1) lookup instead of O(n)
-  const selectedSlugsSet = React.useMemo(
-    () => new Set(selectedSlugs),
-    [selectedSlugs],
-  );
-
-  // Memoize toggle handlers to prevent creating new functions on every render
-  const toggleHandlers = React.useMemo(() => {
-    const handlers = new Map<string, () => void>();
-    categories.forEach((category) => {
-      handlers.set(category.slug, () => onToggle(category.slug));
-    });
-    return handlers;
-  }, [categories, onToggle]);
-
-  const contentClassName = React.useMemo(
-    () =>
-      cn(
-        'w-72 p-3 rounded-2xl shadow-regular-md',
-        'bg-bg-surface-800',
-        'border-0',
-      ),
-    [],
-  );
-
   return (
     <Popover.Root open={isOpen} onOpenChange={onOpenChange}>
       <Popover.Trigger asChild>{children}</Popover.Trigger>
@@ -55,7 +30,11 @@ export const CategoryFilterDropdown = React.memo(function CategoryFilterDropdown
         align='start'
         sideOffset={8}
         showArrow={false}
-        className={contentClassName}
+        className={cn(
+          'w-72 p-3 rounded-2xl shadow-regular-md',
+          'bg-bg-surface-800',
+          'border-0',
+        )}
         unstyled
       >
         <div className='flex flex-col'>
@@ -63,13 +42,14 @@ export const CategoryFilterDropdown = React.memo(function CategoryFilterDropdown
             <CategoryFilterItem
               key={category.id}
               category={category}
-              isSelected={selectedSlugsSet.has(category.slug)}
-              onToggle={toggleHandlers.get(category.slug) ?? (() => onToggle(category.slug))}
+              isSelected={selectedSlugs.includes(category.slug)}
+              slug={category.slug}
+              onToggle={onToggle}
             />
           ))}
         </div>
       </Popover.Content>
     </Popover.Root>
   );
-});
+}
 

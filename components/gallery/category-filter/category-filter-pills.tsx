@@ -3,6 +3,18 @@ import { cn } from '@/utils/cn';
 import { getCategoryIcon } from './category-icons';
 import type { Category } from '@/types';
 
+// Pre-compute static classNames
+const PILLS_CONTAINER_CLASS = 'flex items-center gap-2';
+const PILL_BUTTON_CLASS = cn(
+  'inline-flex items-center gap-1.5 h-10 px-4 rounded-full',
+  'bg-bg-weak-50',
+  'text-label-md text-text-strong-950',
+  'transition-colors duration-200 ease-out',
+  'hover:bg-bg-soft-200',
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base focus-visible:ring-offset-2',
+);
+const PILL_ICON_CLASS = 'size-4 shrink-0 text-text-sub-600';
+
 interface CategoryFilterPillsProps {
   categories: Category[];
   selectedSlugs: string[];
@@ -10,47 +22,29 @@ interface CategoryFilterPillsProps {
   className?: string;
 }
 
-// Memoize individual pill button to prevent unnecessary re-renders
+interface CategoryPillProps {
+  category: Category;
+  onRemove: (slug: string) => void;
+}
+
+// Memoized pill component to prevent unnecessary re-renders
 const CategoryPill = React.memo(function CategoryPill({
   category,
   onRemove,
-}: {
-  category: Category;
-  onRemove: (slug: string) => void;
-}) {
-  const Icon = React.useMemo(() => getCategoryIcon(category.slug), [category.slug]);
-
+}: CategoryPillProps) {
+  const Icon = getCategoryIcon(category.slug);
   const handleClick = React.useCallback(() => {
     onRemove(category.slug);
   }, [category.slug, onRemove]);
-
-  // Pre-compute static className string
-  const buttonClassName = React.useMemo(
-    () =>
-      cn(
-        'inline-flex items-center gap-1.5 h-10 px-4 rounded-full',
-        'bg-bg-weak-50',
-        'text-label-md text-text-strong-950',
-        'transition-colors duration-200 ease-out',
-        'hover:bg-bg-soft-200',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-base focus-visible:ring-offset-2',
-      ),
-    [],
-  );
-
-  const iconClassName = React.useMemo(
-    () => 'size-4 shrink-0 text-text-sub-600',
-    [],
-  );
 
   return (
     <button
       type='button'
       onClick={handleClick}
-      className={buttonClassName}
+      className={PILL_BUTTON_CLASS}
     >
       <span>{category.name}</span>
-      <Icon className={iconClassName} />
+      <Icon className={PILL_ICON_CLASS} />
     </button>
   );
 });
@@ -61,16 +55,10 @@ export const CategoryFilterPills = React.memo(function CategoryFilterPills({
   onRemove,
   className,
 }: CategoryFilterPillsProps) {
-  // Convert selectedSlugs to Set for O(1) lookup
-  const selectedSlugsSet = React.useMemo(
-    () => new Set(selectedSlugs),
-    [selectedSlugs],
-  );
-
   // Memoize filtered categories to avoid re-filtering on every render
   const selectedCategories = React.useMemo(
-    () => categories.filter((cat) => selectedSlugsSet.has(cat.slug)),
-    [categories, selectedSlugsSet],
+    () => categories.filter((cat) => selectedSlugs.includes(cat.slug)),
+    [categories, selectedSlugs],
   );
 
   if (selectedCategories.length === 0) {
@@ -78,7 +66,7 @@ export const CategoryFilterPills = React.memo(function CategoryFilterPills({
   }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn(PILLS_CONTAINER_CLASS, className)}>
       {selectedCategories.map((category) => (
         <CategoryPill key={category.id} category={category} onRemove={onRemove} />
       ))}

@@ -3,95 +3,79 @@ import { cn } from '@/utils/cn';
 import { getCategoryIcon } from './category-icons';
 import type { Category } from '@/types';
 
+// Pre-compute static className
+const FILTER_ITEM_BUTTON_CLASS = cn(
+  'w-full flex items-center gap-4 h-10 px-3 rounded-xl',
+  'text-left transition-colors duration-200 ease-out',
+  'hover:bg-white-alpha-10',
+  'focus:outline-none focus-visible:bg-white-alpha-10',
+);
+
+const SPAN_CLASS = 'flex-1 text-label-md text-text-white-0 truncate';
+const ICON_CLASS = 'size-4 shrink-0 text-text-soft-400';
+const CHECKBOX_CONTAINER_CLASS = 'flex items-center justify-center shrink-0 size-5 rounded';
+const CHECKBOX_SVG_CLASS = 'size-5';
+
 interface CategoryFilterItemProps {
   category: Category;
   isSelected: boolean;
-  onToggle: () => void;
+  slug: string;
+  onToggle: (slug: string) => void;
 }
-
-// Memoize the SVG components to avoid recreating them
-const CheckedIcon = React.memo(() => (
-  <svg
-    width='20'
-    height='20'
-    viewBox='0 0 20 20'
-    fill='none'
-    xmlns='http://www.w3.org/2000/svg'
-    className='size-5'
-  >
-    <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
-    <path
-      d='M8.33333 13.7292L5 10.3958L6.0625 9.33333L8.33333 11.6042L13.9375 6L15 7.0625L8.33333 13.7292Z'
-      fill='white'
-    />
-  </svg>
-));
-CheckedIcon.displayName = 'CheckedIcon';
-
-const UncheckedIcon = React.memo(() => (
-  <svg
-    width='20'
-    height='20'
-    viewBox='0 0 20 20'
-    fill='none'
-    xmlns='http://www.w3.org/2000/svg'
-    className='size-5'
-  >
-    <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
-  </svg>
-));
-UncheckedIcon.displayName = 'UncheckedIcon';
 
 export const CategoryFilterItem = React.memo(function CategoryFilterItem({
   category,
   isSelected,
+  slug,
   onToggle,
 }: CategoryFilterItemProps) {
-  const Icon = React.useMemo(() => getCategoryIcon(category.slug), [category.slug]);
-
-  // Pre-compute static classNames
-  const buttonClassName = React.useMemo(
-    () =>
-      cn(
-        'w-full flex items-center gap-4 h-10 px-3 rounded-xl',
-        'text-left transition-colors duration-200 ease-out',
-        'hover:bg-white-alpha-10',
-        'focus:outline-none focus-visible:bg-white-alpha-10',
-      ),
-    [],
-  );
-
-  const indicatorClassName = React.useMemo(
-    () => 'flex items-center justify-center shrink-0 size-5 rounded',
-    [],
-  );
-
-  const categoryNameClassName = React.useMemo(
-    () => 'flex-1 text-label-md text-text-white-0 truncate',
-    [],
-  );
-
-  const iconClassName = React.useMemo(
-    () => 'size-4 shrink-0 text-text-soft-400',
-    [],
-  );
+  const Icon = getCategoryIcon(category.slug);
+  const handleClick = React.useCallback(() => {
+    onToggle(slug);
+  }, [slug, onToggle]);
 
   return (
     <button
       type='button'
-      onClick={onToggle}
-      className={buttonClassName}
+      onClick={handleClick}
+      className={FILTER_ITEM_BUTTON_CLASS}
     >
       {/* Selection indicator */}
-      <div className={indicatorClassName}>
-        {isSelected ? <CheckedIcon /> : <UncheckedIcon />}
+      <div className={CHECKBOX_CONTAINER_CLASS}>
+        {isSelected ? (
+          <svg
+            width='20'
+            height='20'
+            viewBox='0 0 20 20'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            className={CHECKBOX_SVG_CLASS}
+          >
+            <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
+            <path
+              d='M8.33333 13.7292L5 10.3958L6.0625 9.33333L8.33333 11.6042L13.9375 6L15 7.0625L8.33333 13.7292Z'
+              fill='white'
+            />
+          </svg>
+        ) : (
+          <svg
+            width='20'
+            height='20'
+            viewBox='0 0 20 20'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            className={CHECKBOX_SVG_CLASS}
+          >
+            <rect width='20' height='20' rx='4' fill='white' fillOpacity='0.12' />
+          </svg>
+        )}
       </div>
 
       {/* Category name */}
-      <span className={categoryNameClassName}>{category.name}</span>
+      <span className={SPAN_CLASS}>{category.name}</span>
 
       {/* Category icon */}
-      <Icon className={iconClassName} />
+      <Icon className={ICON_CLASS} />
     </button>
   );
 });

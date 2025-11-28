@@ -55,6 +55,21 @@ export default function DiscoverPage() {
     [router, searchParams, type]
   );
 
+  // Stable callbacks for filter changes
+  const handleViewChange = useCallback(
+    (newView: ViewType) => {
+      updateFilters(newView);
+    },
+    [updateFilters]
+  );
+
+  const handleCategoriesChange = useCallback(
+    (newCategories: string[]) => {
+      updateFilters(undefined, newCategories);
+    },
+    [updateFilters]
+  );
+
   // Load categories
   useEffect(() => {
     if (!isValidType) return;
@@ -135,8 +150,8 @@ export default function DiscoverPage() {
         view={view}
         selectedCategories={selectedCategories}
         categories={categories}
-        onViewChange={(newView) => updateFilters(newView)}
-        onCategoriesChange={(newCategories) => updateFilters(undefined, newCategories)}
+        onViewChange={handleViewChange}
+        onCategoriesChange={handleCategoriesChange}
       />
 
       {loading ? (
