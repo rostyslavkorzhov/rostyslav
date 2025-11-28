@@ -91,7 +91,7 @@ export default function SignupPage() {
 
     try {
       await authService.signUp(email, password, fullName);
-      router.push('/admin');
+      router.push('/discover/home');
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
     } finally {

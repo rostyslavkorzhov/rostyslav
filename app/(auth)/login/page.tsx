@@ -88,7 +88,7 @@ function LoginForm() {
 
     try {
       await authService.signIn(email, password);
-      const redirect = searchParams.get('redirect') || '/admin';
+      const redirect = searchParams.get('redirect') || '/discover/home';
       router.push(redirect);
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
@@ -119,7 +119,7 @@ function LoginForm() {
             Sign In
           </div>
           <div className='text-paragraph-sm text-text-sub-600 md:text-paragraph-md'>
-            Sign in to access the admin panel
+            Sign in to your account
           </div>
         </div>
       </div>

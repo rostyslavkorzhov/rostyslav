@@ -1,57 +1,31 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { createServerComponentClient } from '@/lib/clients/supabase-server-component';
+import { isAdmin } from '@/lib/utils/auth';
+import { AdminLayoutClient } from './admin-layout-client';
 
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useEffect } from 'react';
-import { LoadingState } from '@/components/ui/loading-state';
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
+  // Verify authentication and admin status server-side
+  const supabase = await createServerComponentClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login?redirect=/admin');
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <LoadingState />
-      </div>
-    );
-  }
-
+  // Middleware should have already redirected, but verify for defense in depth
   if (!user) {
-    return null;
+    redirect('/login?redirect=/admin');
   }
 
-  return (
-    <div className='flex min-h-screen'>
-      {/* Sidebar */}
-      <aside className='w-64 border-r border-stroke-soft-200 bg-bg-white-0'>
-        <div className='p-6'>
-          <h2 className='text-title-h3 text-text-strong-950 mb-6'>Admin</h2>
-          <nav className='space-y-2'>
-            <Link
-              href='/admin'
-              className='block rounded-lg px-4 py-2 text-text-sub-600 hover:bg-bg-weak-50'
-            >
-              Dashboard
-            </Link>
-          </nav>
-        </div>
-      </aside>
+  // Check admin status
+  const userIsAdmin = await isAdmin(user);
+  if (!userIsAdmin) {
+    redirect('/?error=access_denied');
+  }
 
-      {/* Main content */}
-      <main className='flex-1 p-8'>{children}</main>
-    </div>
-  );
+  // User is authenticated and is admin - render the layout
+  return <AdminLayoutClient>{children}</AdminLayoutClient>;
 }
 
