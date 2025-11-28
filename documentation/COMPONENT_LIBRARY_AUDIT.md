@@ -117,6 +117,7 @@ The following components are correctly using AlignUI components:
 - ✅ **Brand Grid** (`components/gallery/brand-grid.tsx`) - Layout component, no design system equivalent needed
 - ✅ **Auth Pages** - Login and Signup pages now properly use Input, Label, Button, and Alert components
 - ✅ **FilterBar** (`components/gallery/filter-bar.tsx`) - Properly uses Select and Input components
+- ✅ **CategoryFilter** (`components/gallery/category-filter/`) - Composed component using Popover and design tokens
 - ✅ **Theme Switch** (`components/theme-switch.tsx`) - Properly uses SegmentedControl component
 
 ## Component Decision Tree
@@ -147,6 +148,18 @@ The following custom components are approved and documented:
 - **BrandGrid** (`components/gallery/brand-grid.tsx`)
   - **Reason:** Layout component for displaying brand cards in a grid
   - **Status:** Uses standard CSS Grid, no design system equivalent needed
+
+- **CategoryFilter** (`components/gallery/category-filter/`)
+  - **Reason:** Domain-specific multi-select category filter with dropdown and selected pills
+  - **Status:** Composed using AlignUI Popover, design tokens, and custom SVG icons
+  - **Components:**
+    - `CategoryFilter` - Main component
+    - `CategoryFilterTrigger` - Button trigger with count badge
+    - `CategoryFilterDropdown` - Dark dropdown panel
+    - `CategoryFilterItem` - Individual category row with checkbox
+    - `CategoryFilterPills` - Selected category pills
+    - `category-icons.tsx` - Category icon mapping
+  - **Note:** Uses custom dark dropdown background (`bg-bg-surface-800`) for contrast
 
 ## Reusable Pattern Components
 
@@ -196,6 +209,37 @@ import * as Button from '@/components/ui/button';
 **Location:** `components/ui/error-state.tsx`
 
 A standardized error display using AlignUI Alert component.
+
+### CategoryFilter
+**Location:** `components/gallery/category-filter/`
+
+A multi-select category filter component with dropdown panel and selected category pills.
+
+**Usage:**
+```tsx
+import { CategoryFilter } from '@/components/gallery/category-filter';
+import type { Category } from '@/types';
+
+<CategoryFilter
+  categories={categories}
+  selectedSlugs={selectedSlugs}
+  onSelectionChange={(slugs) => setSelectedSlugs(slugs)}
+/>
+```
+
+**Props:**
+- `categories: Category[]` - Array of category objects with `id`, `name`, and `slug`
+- `selectedSlugs: string[]` - Array of selected category slugs
+- `onSelectionChange: (slugs: string[]) => void` - Callback when selection changes
+- `className?: string` - Additional CSS classes
+
+**Features:**
+- Dark dropdown panel with checkbox-style selection indicators
+- Selected categories displayed as removable pills
+- Trigger button shows count badge when selections exist
+- Clear button appears when categories are selected
+- Uses AlignUI Popover for dropdown behavior
+- All styling uses AlignUI design tokens
 
 **Usage:**
 ```tsx
