@@ -64,7 +64,7 @@ export const CategoryFilterDropdown = React.memo(function CategoryFilterDropdown
               key={category.id}
               category={category}
               isSelected={selectedSlugsSet.has(category.slug)}
-              onToggle={toggleHandlers.get(category.slug)!}
+              onToggle={toggleHandlers.get(category.slug) ?? (() => onToggle(category.slug))}
             />
           ))}
         </div>
