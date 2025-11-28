@@ -15,6 +15,7 @@ import {
 import { AuthService } from '@/lib/services/auth.service';
 import { loginSchema, extractFieldErrors } from '@/lib/validations';
 import * as Checkbox from '@/components/ui/checkbox';
+import * as CompactButton from '@/components/ui/compact-button';
 import * as Divider from '@/components/ui/divider';
 import * as FancyButton from '@/components/ui/fancy-button';
 import * as Input from '@/components/ui/input';
@@ -38,13 +39,19 @@ function PasswordInput(
           placeholder='••••••••••'
           {...props}
         />
-        <button type='button' onClick={() => setShowPassword((s) => !s)}>
-          {showPassword ? (
-            <RiEyeOffLine className='size-5 text-text-soft-400 group-has-[disabled]:text-text-disabled-300' />
-          ) : (
-            <RiEyeLine className='size-5 text-text-soft-400 group-has-[disabled]:text-text-disabled-300' />
-          )}
-        </button>
+        <CompactButton.Root
+          type='button'
+          variant='ghost'
+          size='large'
+          fullRadius
+          onClick={() => setShowPassword((s) => !s)}
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          <CompactButton.Icon
+            as={showPassword ? RiEyeOffLine : RiEyeLine}
+            className='text-text-soft-400 group-has-[disabled]:text-text-disabled-300'
+          />
+        </CompactButton.Root>
       </Input.Wrapper>
     </Input.Root>
   );
@@ -151,7 +158,9 @@ function LoginForm() {
             </Input.Wrapper>
           </Input.Root>
           {validationErrors.email && (
-            <p className='text-paragraph-xs text-red-600'>{validationErrors.email}</p>
+            <p className='text-paragraph-xs text-error-base'>
+              {validationErrors.email}
+            </p>
           )}
         </div>
 
@@ -172,7 +181,9 @@ function LoginForm() {
             disabled={loading}
           />
           {validationErrors.password && (
-            <p className='text-paragraph-xs text-red-600'>{validationErrors.password}</p>
+            <p className='text-paragraph-xs text-error-base'>
+              {validationErrors.password}
+            </p>
           )}
         </div>
 

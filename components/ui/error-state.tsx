@@ -29,7 +29,7 @@ export function ErrorState({
       >
         <Alert.Icon as={RiErrorWarningLine} />
         <div className='flex flex-col gap-2'>
-          <h3 className='text-label-md font-medium text-text-strong-950'>
+          <h3 className='text-label-md text-text-strong-950'>
             {title}
           </h3>
           <p className='text-paragraph-sm text-text-sub-600'>{message}</p>

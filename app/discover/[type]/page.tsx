@@ -5,6 +5,7 @@ import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import { PageGrid } from '@/components/gallery/page-grid';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { LoadingState } from '@/components/ui/loading-state';
+import { ErrorState } from '@/components/ui/error-state';
 import type { PageWithRelations, Category, ViewType, PageTypeSlug } from '@/types';
 
 const VALID_TYPES: PageTypeSlug[] = ['product', 'home', 'about'];
@@ -108,10 +109,10 @@ export default function DiscoverPage() {
   if (!isValidType) {
     return (
       <div className='container mx-auto px-5 py-16'>
-        <h1 className='text-title-h1 text-text-strong-950 mb-4'>Invalid Page Type</h1>
-        <p className='text-paragraph-lg text-text-sub-600'>
-          Page type must be product, home, or about.
-        </p>
+        <ErrorState
+          title='Invalid page type'
+          message='Page type must be product, home, or about.'
+        />
       </div>
     );
   }

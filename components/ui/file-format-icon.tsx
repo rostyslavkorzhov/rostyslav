@@ -7,7 +7,7 @@ export const fileFormatIconVariants = tv({
   slots: {
     root: 'relative shrink-0',
     formatBox:
-      'absolute bottom-1.5 left-0 flex h-4 items-center rounded px-[3px] py-0.5 text-[11px] font-semibold leading-none text-static-white',
+      'absolute bottom-1.5 left-0 flex h-4 items-center rounded px-[3px] py-0.5 text-subheading-2xs leading-none text-static-white',
   },
   variants: {
     size: {

@@ -29,7 +29,7 @@ export function EmptyState({
       >
         <Alert.Icon as={RiInboxLine} />
         <div className='flex flex-col gap-2'>
-          <h3 className='text-label-md font-medium text-text-strong-950'>
+          <h3 className='text-label-md text-text-strong-950'>
             {title}
           </h3>
           {description && (
