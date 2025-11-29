@@ -1,5 +1,7 @@
 # Project Rules for Best of Ecom
 
+You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI, and Tailwind.
+
 ## Design System & Component Reuse
 
 **CRITICAL: Always prioritize existing design library tokens and components before creating new ones.**
@@ -72,6 +74,40 @@ Always use existing pattern components when available:
 - Use dynamic loading for non-critical components
 - Optimize images: use WebP format, include size data, implement lazy loading
 
+## Server Components & Data Fetching
+
+### Default to Server Components
+- **Always start with Server Components** for pages that fetch data
+- Only add `'use client'` when interactivity is required (forms, buttons, filters)
+- Extract interactive parts to separate client components (e.g., `page-client.tsx`)
+
+### Data Fetching Pattern
+- **Server Components**: Fetch data directly using services (e.g., `getPageService()`)
+- **Never use `useEffect` + `fetch` in page components** - this creates client-side waterfalls
+- Use `loading.tsx` files for Suspense boundaries
+- Always add `generateMetadata` for Server Component pages
+
+### Error Handling
+- Map external API errors to application error types at the query/client layer
+- Supabase "not found" errors (code `PGRST116`) should throw `NotFoundError`
+- Use `notFound()` from `next/navigation` in Server Components for 404s
+
+### Optimistic UI Updates
+- For filter interactions (checkboxes, dropdowns), use optimistic state with `useTransition`
+- Update local state immediately, then sync with server via navigation
+- Use `router.replace()` instead of `router.push()` for filter changes
+
+### TypeScript Modules
+- Empty TypeScript files must export at least one item (use `export {};` for placeholders)
+- Never manually edit auto-generated files (e.g., `next-env.d.ts`)
+
+### API Routes
+- Prefer Server Components over API routes when possible
+- API routes should only exist for external integrations or webhooks
+- When removing API routes, ensure files are actually deleted from repository
+
+**For detailed context and examples, see `documentation/LESSONS_LEARNED.md`**
+
 ## Key Conventions
 
 - Use 'nuqs' for URL search parameter state management
@@ -82,4 +118,3 @@ Always use existing pattern components when available:
   - Avoid for data fetching or state management
 
 Follow Next.js docs for Data Fetching, Rendering, and Routing.
-

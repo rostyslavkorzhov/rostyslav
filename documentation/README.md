@@ -16,6 +16,9 @@ Comprehensive list of all required environment variables, setup instructions for
 ### [Architecture Analysis](./architecture-analysis.md)
 Detailed analysis of the application architecture, recommended patterns, and migration plan for scalable development with external integrations.
 
+### [Lessons Learned](./LESSONS_LEARNED.md)
+Key learnings from optimization work, bug fixes, and architectural decisions. Includes patterns, pitfalls, and best practices discovered during development.
+
 ---
 
 ## Quick Links
