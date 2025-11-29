@@ -206,6 +206,10 @@ export class PageQueries {
         .single();
 
       if (error) {
+        // Check if this is a "not found" error (PGRST116 is Supabase's code for no rows returned)
+        if (error.code === 'PGRST116' || error.message?.includes('No rows returned')) {
+          throw new NotFoundError('Page not found');
+        }
         throw new ExternalApiError(
           'Failed to fetch page',
           'Supabase',
@@ -238,7 +242,8 @@ export class PageQueries {
         siblingPage,
       };
     } catch (error) {
-      if (error instanceof ExternalApiError) {
+      // Re-throw NotFoundError and ExternalApiError as-is
+      if (error instanceof NotFoundError || error instanceof ExternalApiError) {
         throw error;
       }
       throw new ExternalApiError(
