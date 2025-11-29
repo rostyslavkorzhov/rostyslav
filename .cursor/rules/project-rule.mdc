@@ -12,5 +12,3 @@ This file ensures Cursor always applies project rules. The main rules file is `.
 - Server Components & Data Fetching patterns
 - Performance Optimization guidelines
 - Project-specific conventions
-
-For detailed lessons learned and optimization notes, see `documentation/LESSONS_LEARNED.md`.

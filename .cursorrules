@@ -62,10 +62,8 @@ Always use existing pattern components when available:
 - Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements
 - Use declarative JSX
 
-## UI and Styling
-
-- Use Shadcn UI, Radix, and Tailwind for components and styling
-- Implement responsive design with Tailwind CSS; use a mobile-first approach
+## Responsiveness
+- Implement responsive design
 
 ## Performance Optimization
 
@@ -105,8 +103,6 @@ Always use existing pattern components when available:
 - Prefer Server Components over API routes when possible
 - API routes should only exist for external integrations or webhooks
 - When removing API routes, ensure files are actually deleted from repository
-
-**For detailed context and examples, see `documentation/LESSONS_LEARNED.md`**
 
 ## Key Conventions
 

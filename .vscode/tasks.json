@@ -5,17 +5,6 @@
       "label": "Start Dev Server (Restart)",
       "type": "shell",
       "command": "pnpm dev:restart",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "focus": false,
-        "clear": true
-      },
-      "runOptions": {
-        "runOn": "default"
-      },
-      "isBackground": true,
       "problemMatcher": {
         "pattern": {
           "regexp": "^$",
@@ -28,7 +17,17 @@
           "beginsPattern": ".*",
           "endsPattern": "(ready|started|compiled|Local:)"
         }
-      }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "default"
+      },
+      "isBackground": true
     },
     {
       "label": "Kill Dev Server",
