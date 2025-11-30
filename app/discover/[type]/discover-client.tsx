@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useQueryStates, parseAsArrayOf, parseAsString } from 'nuqs';
+import { useQueryStates, parseAsNativeArrayOf, parseAsString } from 'nuqs';
 import { PageGrid } from '@/components/gallery/page-grid';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { PageContainer } from '@/components/page-container';
@@ -16,10 +16,19 @@ interface DiscoverClientProps {
 
 export function DiscoverClient({ type, categories }: DiscoverClientProps) {
   // nuqs handles URL params with instant updates (no startTransition delay)
-  const [{ view, categories: categorySlugs }, setFilters] = useQueryStates({
-    view: parseAsString.withDefault('mobile'),
-    categories: parseAsArrayOf(parseAsString).withDefault([]),
-  });
+  // Using parseAsNativeArrayOf for individual params: ?category=food&category=beauty (cleaner URLs)
+  // Using 'category' (singular) in URL to match industry standards (Mobbin, Land-book pattern)
+  const [{ view, categories: categorySlugs }, setFilters] = useQueryStates(
+    {
+      view: parseAsString.withDefault('mobile'),
+      categories: parseAsNativeArrayOf(parseAsString).withDefault([]),
+    },
+    {
+      urlKeys: {
+        categories: 'category', // Use 'category' in URL instead of 'categories'
+      },
+    }
+  );
 
   // SWR handles client-side data fetching with caching
   const { data, isLoading, error } = usePages({
