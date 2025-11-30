@@ -19,6 +19,9 @@ Detailed analysis of the application architecture, recommended patterns, and mig
 ### [Lessons Learned](./LESSONS_LEARNED.md)
 Key learnings from optimization work, bug fixes, and architectural decisions. Includes patterns, pitfalls, and best practices discovered during development.
 
+### [Filtering Architecture](./FILTERING_ARCHITECTURE.md)
+Problem analysis and solution design for the Discover page filtering system. Documents the issues with current implementation and provides a detailed implementation plan using nuqs and Suspense boundaries.
+
 ---
 
 ## Quick Links
