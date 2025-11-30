@@ -9,11 +9,21 @@ interface PageGridServerProps {
 }
 
 /**
- * Server Component that fetches and renders pages based on filter parameters
- * This component is wrapped in a Suspense boundary in the parent, so it will stream results
- * when filters change
+ * Server Component for fetching and rendering filtered pages
+ *
+ * This component:
+ * - Receives filter params from parent
+ * - Fetches pages from the database
+ * - Renders the PageGrid with results
+ *
+ * It's designed to be wrapped in a Suspense boundary with a key
+ * that changes when filters change, triggering a re-fetch.
  */
-export async function PageGridServer({ type, view, categories }: PageGridServerProps) {
+export async function PageGridServer({
+  type,
+  view,
+  categories,
+}: PageGridServerProps) {
   const result = await getPageService().listPagesByType({
     page_type_slug: type,
     view: view as ViewType,
@@ -26,8 +36,8 @@ export async function PageGridServer({ type, view, categories }: PageGridServerP
     <>
       <PageGrid pages={result.data} />
       {result.hasMore && (
-        <div className='mt-8 text-center'>
-          <p className='text-label-sm text-text-sub-600'>
+        <div className="mt-8 text-center">
+          <p className="text-label-sm text-text-sub-600">
             Showing {result.data.length} of {result.count} pages
           </p>
         </div>
@@ -35,3 +45,4 @@ export async function PageGridServer({ type, view, categories }: PageGridServerP
     </>
   );
 }
+

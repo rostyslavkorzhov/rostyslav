@@ -1,96 +1,54 @@
 'use client';
 
-import { useCallback, useState, useTransition, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import { useQueryStates, parseAsArrayOf, parseAsString } from 'nuqs';
 import { PageGrid } from '@/components/gallery/page-grid';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { PageContainer } from '@/components/page-container';
-import type { PageWithRelations, Category, ViewType, PageTypeSlug } from '@/types';
+import { LoadingState } from '@/components/ui/loading-state';
+import { usePages } from '@/hooks/use-pages';
+import type { Category, ViewType, PageTypeSlug } from '@/types';
 
 interface DiscoverClientProps {
   type: PageTypeSlug;
-  initialPages: PageWithRelations[];
-  initialCount: number;
-  initialHasMore: boolean;
   categories: Category[];
-  initialView: ViewType;
-  initialSelectedCategories: string[];
 }
 
-export function DiscoverClient({
-  type,
-  initialPages,
-  initialCount,
-  initialHasMore,
-  categories,
-  initialView,
-  initialSelectedCategories,
-}: DiscoverClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+export function DiscoverClient({ type, categories }: DiscoverClientProps) {
+  // nuqs handles URL params with instant updates (no startTransition delay)
+  const [{ view, categories: categorySlugs }, setFilters] = useQueryStates({
+    view: parseAsString.withDefault('mobile'),
+    categories: parseAsArrayOf(parseAsString).withDefault([]),
+  });
 
-  // Optimistic state for immediate UI updates
-  const [optimisticView, setOptimisticView] = useState<ViewType>(initialView);
-  const [optimisticCategories, setOptimisticCategories] = useState<string[]>(
-    initialSelectedCategories
-  );
+  // SWR handles client-side data fetching with caching
+  const { data, isLoading, error } = usePages({
+    page_type_slug: type,
+    view: view as ViewType,
+    category_slugs: categorySlugs.length > 0 ? categorySlugs : undefined,
+    limit: 20,
+    offset: 0,
+  });
 
-  // Sync optimistic state with URL when it changes (after server update)
-  useEffect(() => {
-    const urlView = (searchParams.get('view') || initialView) as ViewType;
-    const urlCategories = searchParams.get('categories')
-      ? searchParams.get('categories')!.split(',').map((s) => s.trim())
-      : initialSelectedCategories;
-
-    setOptimisticView(urlView);
-    setOptimisticCategories(urlCategories);
-  }, [searchParams, initialView, initialSelectedCategories]);
-
-  // Update URL when filters change
-  const updateFilters = useCallback(
-    (newView?: ViewType, newCategories?: string[]) => {
-      const params = new URLSearchParams(searchParams.toString());
-
-      if (newView !== undefined) {
-        params.set('view', newView);
-        setOptimisticView(newView);
-      }
-
-      if (newCategories !== undefined) {
-        if (newCategories.length === 0) {
-          params.delete('categories');
-        } else {
-          params.set('categories', newCategories.join(','));
-        }
-        setOptimisticCategories(newCategories);
-      }
-
-      // Use startTransition to mark navigation as non-urgent
-      // This allows React to update the UI immediately before navigation
-      startTransition(() => {
-        router.replace(`/discover/${type}?${params.toString()}`);
-      });
-    },
-    [router, searchParams, type]
-  );
-
-  // Stable callbacks for filter changes
+  // Instant filter updates - no transition delay
   const handleViewChange = useCallback(
     (newView: ViewType) => {
-      updateFilters(newView);
+      setFilters({ view: newView });
     },
-    [updateFilters]
+    [setFilters]
   );
 
   const handleCategoriesChange = useCallback(
     (newCategories: string[]) => {
-      updateFilters(undefined, newCategories);
+      setFilters({ categories: newCategories.length > 0 ? newCategories : null });
     },
-    [updateFilters]
+    [setFilters]
   );
 
   const pageTypeName = type.charAt(0).toUpperCase() + type.slice(1);
+  const pages = data?.data || [];
+  const hasMore = data?.hasMore || false;
+  const totalCount = data?.count || 0;
 
   return (
     <PageContainer>
@@ -104,22 +62,33 @@ export function DiscoverClient({
       </div>
 
       <DiscoverFilters
-        view={optimisticView}
-        selectedCategories={optimisticCategories}
+        view={view as ViewType}
+        selectedCategories={categorySlugs}
         categories={categories}
         onViewChange={handleViewChange}
         onCategoriesChange={handleCategoriesChange}
       />
 
-      <PageGrid pages={initialPages} />
-      {initialHasMore && (
-        <div className='mt-8 text-center'>
-          <p className='text-label-sm text-text-sub-600'>
-            Showing {initialPages.length} of {initialCount} pages
+      {isLoading && !data ? (
+        <LoadingState message='Loading pages...' />
+      ) : error ? (
+        <div className='py-12 text-center'>
+          <p className='text-paragraph-md text-error-base'>
+            Failed to load pages. Please try again.
           </p>
         </div>
+      ) : (
+        <>
+          <PageGrid pages={pages} />
+          {hasMore && (
+            <div className='mt-8 text-center'>
+              <p className='text-label-sm text-text-sub-600'>
+                Showing {pages.length} of {totalCount} pages
+              </p>
+            </div>
+          )}
+        </>
       )}
     </PageContainer>
   );
 }
-
