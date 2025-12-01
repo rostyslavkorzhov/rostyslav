@@ -3,9 +3,9 @@
 import { useCallback } from 'react';
 import { useQueryStates, parseAsNativeArrayOf, parseAsString } from 'nuqs';
 import { PageGrid } from '@/components/gallery/page-grid';
+import { PageGridSkeleton } from '@/components/gallery/page-grid-skeleton';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { PageContainer } from '@/components/page-container';
-import { LoadingState } from '@/components/ui/loading-state';
 import { usePages } from '@/hooks/use-pages';
 import type { Category, ViewType, PageTypeSlug } from '@/types';
 
@@ -79,7 +79,7 @@ export function DiscoverClient({ type, categories }: DiscoverClientProps) {
       />
 
       {isLoading && !data ? (
-        <LoadingState message='Loading pages...' />
+        <PageGridSkeleton count={8} />
       ) : error ? (
         <div className='py-12 text-center'>
           <p className='text-paragraph-md text-error-base'>
