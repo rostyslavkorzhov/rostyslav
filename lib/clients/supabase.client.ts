@@ -33,6 +33,7 @@ export class PageQueries {
 
   /**
    * List pages by type with filters (for discover pages)
+   * Optimized: Single query with inner joins instead of 4 sequential queries
    */
   async listPagesByType(filters: PageFilters = {}) {
     try {
@@ -46,71 +47,27 @@ export class PageQueries {
         offset = 0,
       } = filters;
 
-      // First, get page_type_id if slug is provided
-      let page_type_id: string | undefined;
-      if (page_type_slug) {
-        const { data: pageType } = await this.client
-          .from('page_types')
-          .select('id')
-          .eq('slug', page_type_slug)
-          .single();
-        if (pageType) {
-          page_type_id = pageType.id;
-        }
-      }
-
-      // Get brand IDs if category filtering is needed
-      let brand_ids: string[] | undefined;
-      if (category_slugs && category_slugs.length > 0) {
-        // Get category IDs from slugs
-        const { data: categories } = await this.client
-          .from('categories')
-          .select('id')
-          .in('slug', category_slugs);
-        
-        if (categories && categories.length > 0) {
-          const category_ids = categories.map((c) => c.id);
-          // Get brand IDs for these categories
-          const { data: brands } = await this.client
-            .from('brands')
-            .select('id')
-            .in('category_id', category_ids)
-            .eq('is_published', true);
-          
-          if (brands) {
-            brand_ids = brands.map((b) => b.id);
-          }
-        }
-      }
-
-      // Start with base query including relations
+      // Single optimized query with inner joins
+      // Use !inner to filter directly on related table columns
       let query = this.client
         .from('pages')
         .select(
-          '*, brand:brands(*, category:categories(*)), page_type:page_types(*)',
+          `*,
+          brand:brands!inner(*, category:categories!inner(*)),
+          page_type:page_types!inner(*)`,
           { count: 'exact' }
-        );
+        )
+        .eq('view', view)
+        .eq('brand.is_published', true);
 
-      // Filter by page type ID
-      if (page_type_id) {
-        query = query.eq('page_type_id', page_type_id);
+      // Filter by page type slug directly (no need to fetch page_type_id first)
+      if (page_type_slug) {
+        query = query.eq('page_type.slug', page_type_slug);
       }
 
-      // Filter by view (mobile/desktop)
-      if (view) {
-        query = query.eq('view', view);
-      }
-
-      // Filter by brand IDs (from category filtering)
-      if (brand_ids && brand_ids.length > 0) {
-        query = query.in('brand_id', brand_ids);
-      } else if (brand_ids && brand_ids.length === 0) {
-        // No brands match the category filter, return empty
-        return {
-          data: [] as PageWithRelations[],
-          count: 0,
-          hasMore: false,
-        };
+      // Filter by category slugs directly (no need to fetch category IDs and brand IDs first)
+      if (category_slugs && category_slugs.length > 0) {
+        query = query.in('brand.category.slug', category_slugs);
       }
 
       // Filter by month
@@ -118,7 +75,7 @@ export class PageQueries {
         query = query.eq('month', month);
       }
 
-      // Filter by brand
+      // Filter by brand ID
       if (brand_id) {
         query = query.eq('brand_id', brand_id);
       }
