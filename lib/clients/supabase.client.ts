@@ -47,6 +47,46 @@ export class PageQueries {
         offset = 0,
       } = filters;
 
+      // Optimized: Fetch brand IDs filtered by category slugs (2 queries instead of 3)
+      // PostgREST doesn't support filtering through two-level nested relations (brand.category.slug)
+      // So we fetch category IDs, then brand IDs, then use brand IDs in the main query
+      let brand_ids: string[] | undefined;
+      if (category_slugs && category_slugs.length > 0) {
+        // Query 1: Get category IDs from slugs
+        const { data: categories } = await this.client
+          .from('categories')
+          .select('id')
+          .in('slug', category_slugs);
+
+        if (categories && categories.length > 0) {
+          const category_ids = categories.map((c) => c.id);
+          // Query 2: Get brand IDs for these categories
+          const { data: brands } = await this.client
+            .from('brands')
+            .select('id')
+            .in('category_id', category_ids)
+            .eq('is_published', true);
+
+          if (brands && brands.length > 0) {
+            brand_ids = brands.map((b) => b.id);
+          } else {
+            // No brands match the category filter, return empty early
+            return {
+              data: [] as PageWithRelations[],
+              count: 0,
+              hasMore: false,
+            };
+          }
+        } else {
+          // No categories match, return empty early
+          return {
+            data: [] as PageWithRelations[],
+            count: 0,
+            hasMore: false,
+          };
+        }
+      }
+
       // Single optimized query with inner joins
       // Use !inner to filter directly on related table columns
       let query = this.client
@@ -65,9 +105,9 @@ export class PageQueries {
         query = query.eq('page_type.slug', page_type_slug);
       }
 
-      // Filter by category slugs directly (no need to fetch category IDs and brand IDs first)
-      if (category_slugs && category_slugs.length > 0) {
-        query = query.in('brand.category.slug', category_slugs);
+      // Filter by brand IDs (from category filtering)
+      if (brand_ids && brand_ids.length > 0) {
+        query = query.in('brand_id', brand_ids);
       }
 
       // Filter by month

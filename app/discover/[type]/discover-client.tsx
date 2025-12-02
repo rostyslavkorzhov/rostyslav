@@ -7,6 +7,8 @@ import { PageGridSkeleton } from '@/components/gallery/page-grid-skeleton';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { PageContainer } from '@/components/page-container';
 import { ErrorState } from '@/components/ui/error-state';
+import * as Alert from '@/components/ui/alert';
+import { RiErrorWarningLine } from '@remixicon/react';
 import { usePages } from '@/hooks/use-pages';
 import type { Category, ViewType, PageTypeSlug } from '@/types';
 
@@ -81,13 +83,36 @@ export function DiscoverClient({ type, categories }: DiscoverClientProps) {
 
       {isLoading && !data ? (
         <PageGridSkeleton count={8} />
-      ) : error ? (
+      ) : error && !data ? (
+        // Only show full error state if there's no previous data
         <ErrorState
           message="Failed to load pages. Please try again."
           onRetry={() => mutate()}
         />
       ) : (
         <>
+          {/* Show error banner if there's an error but previous data exists */}
+          {error && data && (
+            <Alert.Root
+              variant='lighter'
+              status='error'
+              size='small'
+              className='mb-6'
+            >
+              <Alert.Icon as={RiErrorWarningLine} />
+              <div className='flex items-center justify-between flex-1'>
+                <p className='text-paragraph-sm text-text-sub-600'>
+                  Failed to refresh pages. Showing previous results.
+                </p>
+                <button
+                  onClick={() => mutate()}
+                  className='text-label-sm text-primary-base hover:text-primary-hover underline ml-4'
+                >
+                  Retry
+                </button>
+              </div>
+            </Alert.Root>
+          )}
           <PageGrid pages={pages} />
           {hasMore && (
             <div className='mt-8 text-center'>
