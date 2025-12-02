@@ -12,15 +12,15 @@ interface PageGridSkeletonProps {
  * Skeleton loader for PageGrid
  *
  * Matches the exact layout of PageGrid cards:
- * - Responsive grid (1-4 columns)
- * - Card with aspect-video image area
- * - Content area with title and metadata
+ * - Responsive grid (3 columns mobile, 2 columns desktop)
+ * - Grey background card with screenshot area
+ * - Brand logo and details below
  *
  * Used as Suspense fallback when filtering triggers data refetch.
  */
 export function PageGridSkeleton({ count = 8 }: PageGridSkeletonProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {Array.from({ length: count }).map((_, index) => (
         <PageCardSkeleton key={index} />
       ))}
@@ -29,30 +29,33 @@ export function PageGridSkeleton({ count = 8 }: PageGridSkeletonProps) {
 }
 
 /**
- * Individual card skeleton matching PageGrid card structure
+ * Individual card skeleton matching PageCard structure
  */
 function PageCardSkeleton() {
   return (
-    <div className="rounded-lg border border-stroke-soft-200 bg-bg-white-0 overflow-hidden">
-      {/* Image area - matches aspect-video */}
-      <Skeleton
-        className="aspect-video w-full"
-        radius="none"
-      />
-
-      {/* Content area - matches p-4 */}
-      <div className="p-4">
-        {/* Title skeleton - matches text-title-h4 */}
+    <div className="flex flex-col">
+      {/* Grey background card with screenshot area */}
+      <div className="bg-bg-weak-50 rounded-lg p-8 overflow-hidden">
         <Skeleton
-          className="h-5 mb-2"
-          width="65%"
+          className="aspect-video w-full"
+          radius="none"
+        />
+      </div>
+
+      {/* Brand details section */}
+      <div className="mt-3 flex items-start gap-2">
+        {/* Logo skeleton - 40px square with rounded-xl */}
+        <Skeleton
+          className="size-10 shrink-0 rounded-xl"
+          radius="none"
         />
 
-        {/* Metadata skeleton - matches the flex row */}
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4" width="60px" radius="small" />
-          <span className="text-text-soft-400">•</span>
-          <Skeleton className="h-4" width="50px" radius="small" />
+        {/* Text skeletons */}
+        <div className="flex flex-col gap-1 min-w-0 flex-1">
+          {/* Brand name skeleton */}
+          <Skeleton className="h-4" width="70%" />
+          {/* Category skeleton */}
+          <Skeleton className="h-4" width="50%" />
         </div>
       </div>
     </div>
