@@ -6,6 +6,7 @@ import { PageGrid } from '@/components/gallery/page-grid';
 import { PageGridSkeleton } from '@/components/gallery/page-grid-skeleton';
 import { DiscoverFilters } from '@/components/gallery/discover-filters';
 import { PageContainer } from '@/components/page-container';
+import { ErrorState } from '@/components/ui/error-state';
 import { usePages } from '@/hooks/use-pages';
 import type { Category, ViewType, PageTypeSlug } from '@/types';
 
@@ -31,7 +32,7 @@ export function DiscoverClient({ type, categories }: DiscoverClientProps) {
   );
 
   // SWR handles client-side data fetching with caching
-  const { data, isLoading, error } = usePages({
+  const { data, isLoading, error, mutate } = usePages({
     page_type_slug: type,
     view: view as ViewType,
     category_slugs: categorySlugs.length > 0 ? categorySlugs : undefined,
@@ -81,11 +82,10 @@ export function DiscoverClient({ type, categories }: DiscoverClientProps) {
       {isLoading && !data ? (
         <PageGridSkeleton count={8} />
       ) : error ? (
-        <div className='py-12 text-center'>
-          <p className='text-paragraph-md text-error-base'>
-            Failed to load pages. Please try again.
-          </p>
-        </div>
+        <ErrorState
+          message="Failed to load pages. Please try again."
+          onRetry={() => mutate()}
+        />
       ) : (
         <>
           <PageGrid pages={pages} />
