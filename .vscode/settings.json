@@ -10,5 +10,8 @@
     "class",
     "className",
     ".*ClassName"
-  ]
+  ],
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }
