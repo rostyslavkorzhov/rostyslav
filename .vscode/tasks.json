@@ -2,44 +2,17 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Dev Server (Restart)",
+      "label": "Restart Dev Server",
       "type": "shell",
-      "command": "pnpm dev:restart",
-      "problemMatcher": {
-        "pattern": {
-          "regexp": "^$",
-          "file": 1,
-          "location": 2,
-          "message": 3
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": ".*",
-          "endsPattern": "(ready|started|compiled|Local:)"
-        }
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "focus": false,
-        "clear": true
-      },
-      "runOptions": {
-        "runOn": "default"
-      },
-      "isBackground": true
-    },
-    {
-      "label": "Kill Dev Server",
-      "type": "shell",
-      "command": "lsof -ti:3000 | xargs kill -9 2>/dev/null || echo 'No process found on port 3000'",
+      "command": "export PATH=\"/usr/local/bin:$PATH\" && lsof -ti:3000 | xargs kill -9 2>/dev/null || true && npx -y pnpm dev",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
-        "panel": "shared",
-        "focus": false
+        "panel": "dedicated"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
       }
     }
   ]
 }
-
